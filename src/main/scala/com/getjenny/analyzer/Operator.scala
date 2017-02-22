@@ -60,7 +60,7 @@ class Disjunction(children: List[Expression]) extends Operator(children: List[Ex
   def evaluate(query: String): Double = {
     def compDisjunction(l: List[Expression]): Double = {
       if (l.head.evaluate(query) == 1) 1
-      else if (l.tail == Nil) l.head.evaluate(query)
+      else if (l.tail == Nil) 1.0 - l.head.evaluate(query)
       else (1.0 - l.head.evaluate(query)) * compDisjunction(l.tail)
     }
     1.0 - compDisjunction(children)
