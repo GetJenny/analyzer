@@ -10,7 +10,7 @@ abstract class Operator(children: List[Expression])  extends Expression {
 }
 
 class OR(children: List[Expression]) extends Operator(children: List[Expression]) {
-  override def toString: String = "or(" + children.mkString("\", \")")
+  override def toString: String = "or(" + children.mkString("\", \"") + ")"
   def add(e: Expression, level: Int): Operator = {
       if (level == 0) new OR(e :: children)
       else children.head match {
