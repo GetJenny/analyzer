@@ -10,7 +10,7 @@ abstract class Operator(children: List[Expression])  extends Expression {
 }
 
 class OR(children: List[Expression]) extends Operator(children: List[Expression]) {
-  override def toString: String = "or(" + children.mkString("\", \"") + ")"
+  override def toString: String = "or(" + children.mkString(", ") + ")"
   def add(e: Expression, level: Int): Operator = {
       if (level == 0) new OR(e :: children)
       else children.head match {
@@ -29,7 +29,7 @@ class OR(children: List[Expression]) extends Operator(children: List[Expression]
 }
 
 class AND(children: List[Expression]) extends Operator(children: List[Expression]) {
-  override def toString: String = "and(" + children.mkString("\", \"") + ")"
+  override def toString: String = "and(" + children.mkString(", ") + ")"
   def add(e: Expression, level: Int = 0): Operator = {
     if (level == 0) new AND(e :: children)
     else children.head match {
@@ -49,7 +49,7 @@ class AND(children: List[Expression]) extends Operator(children: List[Expression
 }
 
 class Disjunction(children: List[Expression]) extends Operator(children: List[Expression]) {
-  override def toString: String = "disjunction(" + children.mkString("\", \"") + ")"
+  override def toString: String = "disjunction(" + children.mkString(", ") + ")"
   def add(e: Expression, level: Int = 0): Operator = {
     if (level == 0) new Disjunction(e :: children)
     else children.head match {
@@ -68,7 +68,7 @@ class Disjunction(children: List[Expression]) extends Operator(children: List[Ex
 }
 
 class Conjunction(children: List[Expression]) extends Operator(children: List[Expression]) {
-  override def toString: String = "conjunction(" + children.mkString("\", \"") + ")"
+  override def toString: String = "conjunction(" + children.mkString(", ") + ")"
   def add(e: Expression, level: Int = 0): Operator = {
     if (level == 0) new Conjunction(e :: children)
     else children.head match {
