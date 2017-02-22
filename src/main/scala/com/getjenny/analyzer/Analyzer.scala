@@ -109,7 +109,7 @@ class DefaultAnalyzer(command_string: String) extends Analyzer(command_string: S
       }
     }
     //adding 2 trailing spaces because we always make a check on char(i -2 )
-    loop("  ".toList ::: commands_string.toList, 2, List(0), 0, "", "", new AND(List()))
+    loop("  ".toList ::: commands_string.toList, 2, List(0), 0, "", "", new Conjunction(List()))
   }
 
 } //end class
