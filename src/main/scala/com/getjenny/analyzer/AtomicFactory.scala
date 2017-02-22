@@ -7,7 +7,7 @@ object AtomicFactory {
 
   val atoms = Set("keyword" , "similar", "synonym", "regex")
 
-  def returnAtoms(name: String, argument: String): Atomic = name match {
+  def returnAtoms(name: String, argument: String): Atomic = name.filter(c => !c.isWhitespace ) match {
 
     case "keyword" => new Keyword(argument)
     case "similar" => new W2VCosineSentence(argument)
