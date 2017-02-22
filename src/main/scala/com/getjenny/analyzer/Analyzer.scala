@@ -1,5 +1,10 @@
 package com.getjenny.analyzer
 
+
+abstract class Analyzer(command_string: String) {
+  def evaluate(sentence: String): Double
+}
+
 /**
   * All sentences with more than 22 characters and with keywords "password" and either "lost" or "forgot"
   *
@@ -11,7 +16,7 @@ package com.getjenny.analyzer
   *
   * In the latter case "or" is treated as disjunction of probabilities
   */
-class DefaultAnalyzer(val command_string: String) {
+class DefaultAnalyzer(command_string: String) extends Analyzer(command_string: String) {
 
   private val logical_operators =  List("and", "or", "disjunction", "conjunction")
   private val operator = this.gobble_commands(command_string)
@@ -19,13 +24,9 @@ class DefaultAnalyzer(val command_string: String) {
   override def toString: String = operator.toString
   /** Read a sentence and produce a score (the higher, the more confident)
     */
-  def evaluate(commands_string: String): Double = {
-    1
+  def evaluate(sentence: String): Double = {
+    operator.evaluate(sentence)
   }
-
-  //  private def evaluate_atom(name: String, arguments: List[String]): Double = {
-  //    AtomicFactory.returnAtoms(name, arguments).evaluate
-  //  }
 
   /**Produces a List for building the tree.
     * make_command_tree("""and(regex(".{22,}"), and(or(keyword("forgot"), keyword("lost")), keyword("password")))""")
@@ -48,13 +49,6 @@ class DefaultAnalyzer(val command_string: String) {
 
     def loop(chars: List[Char], indice: Int, parenthesis_balance: List[Int], quote_balance: Int, command_buffer: String,
              argument_buffer: String, command_tree: Operator):  Operator = {
-//      println("\n\nSTART..................... " + indice)
-//      println("char: '" + chars(indice) + "'" )
-//      println("parenthesis_balance: '" + parenthesis_balance + "'" )
-//      println("quote_balance: '" + quote_balance + "'" )
-//      println("command_buffer: '" + command_buffer + "'" )
-//      println("argument_buffer: '" + argument_buffer + "'" )
-//      println("command_tree: '" + command_tree + "'" )
 
       val just_opened_parenthesis = chars(indice) == '(' && !escape_char(chars, indice) && quote_balance == 0
       val just_closed_parenthesis = chars(indice) == ')' && !escape_char(chars, indice) && quote_balance == 0
@@ -80,22 +74,22 @@ class DefaultAnalyzer(val command_string: String) {
       // Start reading the command
       // If not in quotation and have letter, add to command string accumulator
       // Then, if a parenthesis opens put the string in command
-      val new_command_buffer = if (chars(indice).isLetter && new_quote_balance == 0) command_buffer + chars(indice)
+      val new_command_buffer = if ((chars(indice).isLetter || chars(indice).isWhitespace) && new_quote_balance == 0) (command_buffer + chars(indice)).filter(c => !c.isWhitespace )
       else if (!just_closed_parenthesis) ""
-      else command_buffer
+      else command_buffer.filter(c => !c.isWhitespace )
 
       // Now read the argument of the command
       // If inside last parenthesis was opened and quotes add to argument
       val argument_acc = if (new_parenthesis_balance.head == 1 && new_quote_balance == 1  && !just_opened_quote) argument_buffer + chars(indice) else ""
 
       if (just_opened_parenthesis && logical_operators.toSet(command_buffer)) {
-        println("DEBUG Adding the operator " + command_buffer)
-        //TODO better?
+        //println("DEBUG Adding the operator " + command_buffer)
+        //TODO better whenever possible
         if (command_buffer == "or") loop(chars, indice + 1, new_parenthesis_balance, new_quote_balance, "", argument_acc, command_tree.add(new OR(List()), new_parenthesis_balance.sum - 1))
         else if (command_buffer == "and") loop(chars, indice + 1, new_parenthesis_balance, new_quote_balance, "", argument_acc, command_tree.add(new AND(List()), new_parenthesis_balance.sum - 1))
         else if (command_buffer == "conjunction") loop(chars, indice + 1, new_parenthesis_balance, new_quote_balance, "", argument_acc, command_tree.add(new Conjunction(List()), new_parenthesis_balance.sum - 1))
         else if (command_buffer == "disjunction") loop(chars, indice + 1, new_parenthesis_balance, new_quote_balance, "", argument_acc, command_tree.add(new Disjunction(List()), new_parenthesis_balance.sum - 1))
-        else throw new Exception("Operator " + command_buffer + " not yet implemented....")
+        else throw new Exception("Operator '" + command_buffer + "' not yet implemented....")
       }
       else if (AtomicFactory.atoms(command_buffer) && new_parenthesis_balance.head == 1 && !just_closed_quote) {
         //println("DEBUG calling loop, without adding an atom, with this command buffer: " + command_buffer)
