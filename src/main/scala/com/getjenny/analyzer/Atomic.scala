@@ -1,5 +1,7 @@
 package com.getjenny.analyzer
 
+import javax.management.Query
+
 import util.Vectors._
 
 /**
@@ -15,11 +17,20 @@ abstract class Atomic extends Expression {
   val isEvaluateNormalized: Boolean  // does "evaluate" return normalized values?
 }
 
+/**
+  * Query ElasticSearch
+  */
+class Search(queries: List[String]) extends Atomic {
+  override def toString: String = "search(\"" + queries + "\")"
+  val isEvaluateNormalized: Boolean = false
+  def evaluate(query: String): Double = 3.14 // returns elasticsearch score of the highest query in queries
+}
+
+/** Basically a word separated from the others. E.g.:
+  * "pippo" matches "pippo and pluto" but not "pippone and pluto"
+  * "pippo.*" matches "pippo and pluto" and "pippone and pluto"
+  */
 class Keyword(val keyword: String) extends Atomic {
-  /** Basically a word separated from the others. E.g.:
-    * "pippo" matches "pippo and pluto" but not "pippone and pluto"
-    * "pippo.*" matches "pippo and pluto" and "pippone and pluto"
-    */
   override def toString: String = "keyword(\"" + keyword + "\")"
   val isEvaluateNormalized: Boolean = true
   private val rx = {"""\b""" + keyword + """\b"""}.r
@@ -38,7 +49,7 @@ class W2VCosineSentence(val sentence: String) extends Atomic  {
   val isEvaluateNormalized: Boolean = true
   def evaluate(query: String): Double = (cosineDistance(sentence2Vec(sentence), sentence2Vec(query)) + 1)/2
 
-  // Similarity is normally the cosine itself. The treshold should be at least
+  // Similarity is normally the cosine itself. The threshold should be at least
   // angle < pi/2 (cosine > 0), but for synonyms let's put cosine > 0.6, i.e. self.evaluate > 0.8
   override val match_threshold: Double = 0.8
 }
