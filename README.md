@@ -1,3 +1,5 @@
+This package is being integrated in `*chat`, it will soon deleted
+
 # Analyzer language and functions
 
 Temporary project to implement a language to be integrated into *chat for state retrieval.
