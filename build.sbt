@@ -9,12 +9,6 @@ crossScalaVersions := Seq("2.12.6", "2.11.11")
 resolvers ++= Seq("Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
   Resolver.bintrayRepo("hseeberger", "maven"))
 
-resolvers +=
-  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
-resolvers +=
-  "Sonatype OSS Releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-
 libraryDependencies ++= {
   val BreezeVersion	= "0.13.2"
   val ScalatestVersion	= "3.0.5"
