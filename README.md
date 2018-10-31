@@ -2,6 +2,8 @@ This package is being integrated in `*chat`, it will soon deleted
 
 # Analyzer language and functions
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b41756fc33584023a70747bfdd401d41)](https://app.codacy.com/app/GetJenny/analyzer?utm_source=github.com&utm_medium=referral&utm_content=GetJenny/analyzer&utm_campaign=Badge_Grade_Settings)
+
 Temporary project to implement a language to be integrated into *chat for state retrieval.
 
 In a nutshell, if chat developers wants the user to go into state "forgot_password" whenever all this conditions are satisfied:
