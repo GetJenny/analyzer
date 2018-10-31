@@ -10,11 +10,11 @@ import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
   *
   * @param arguments regular expression
   */
-class RegularExpressionAtomic(arguments: List[String], restricted_args: Map[String, String]) extends AbstractAtomic {
+class RegularExpressionAtomic(arguments: List[String], restrictedArgs: Map[String, String]) extends AbstractAtomic {
   /**
     * A Regex
     */
-  val re = arguments.headOption match {
+  val re: String = arguments.headOption match {
     case Some(t) => t
     case _ => throw ExceptionAtomic("RegularExpressionAtomic: must have one argument")
   }

@@ -6,6 +6,6 @@ import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
   * Created by mal on 20/02/2017.
   */
 
-abstract class AbstractParser(command_string: String) {
+abstract class AbstractParser(command: String) {
   def evaluate(sentence: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result
 }

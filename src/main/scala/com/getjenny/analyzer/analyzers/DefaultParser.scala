@@ -24,12 +24,12 @@ import scalaz.Scalaz._
   *
   * In the latter case "or" is treated as disjunction of probabilities
   */
-abstract class DefaultParser(command_string: String, restricted_args: Map[String, String]) extends AbstractParser(command_string: String) {
+abstract class DefaultParser(command: String, restrictedArgs: Map[String, String]) extends AbstractParser(command: String) {
 
   val atomicFactory: AtomicFactoryTrait[List[String], AbstractAtomic, Map[String, String]]
   val operatorFactory: OperatorFactoryTrait[List[Expression], AbstractOperator]
 
-  private[this] val operator = gobbleCommands(command_string)
+  private[this] val operator = gobbleCommands(command)
 
   override def toString: String = operator.toString
   /** Read a sentence and produce a score (the higher, the more confident)
@@ -50,7 +50,7 @@ abstract class DefaultParser(command_string: String, restricted_args: Map[String
     * a boolean AND etc
     *
     */
-  def gobbleCommands(commands_string: String): AbstractOperator = {
+  def gobbleCommands(commands: String): AbstractOperator = {
 
     /** \( does not count, \\( does
       */
@@ -130,7 +130,7 @@ abstract class DefaultParser(command_string: String, restricted_args: Map[String
         } else if (atomicFactory.operations(commandBuffer) && justClosedParenthesis) {
           // We have read all the atomic's arguments, add the atomic to the tree
           //println("DEBUG Calling loop, adding the atom: " + command_buffer + ", " + arguments)
-          val atomic = Try(atomicFactory.get(commandBuffer, arguments, restricted_args)) recover {
+          val atomic = Try(atomicFactory.get(commandBuffer, arguments, restrictedArgs)) recover {
             case e: NoSuchElementException =>
               throw AnalyzerCommandException("Atomic does not exists(" + commandBuffer + ")", e)
             case NonFatal(e) =>
@@ -156,7 +156,7 @@ abstract class DefaultParser(command_string: String, restricted_args: Map[String
       }
     }
     //adding 2 trailing spaces because we always make a check on char(i -2 )
-    loop(chars = "  ".toList ::: commands_string.toList,
+    loop(chars = "  ".toList ::: commands.toList,
       indice = 2,
       parenthesis_balance = List(0),
       quoteBalance = 0,

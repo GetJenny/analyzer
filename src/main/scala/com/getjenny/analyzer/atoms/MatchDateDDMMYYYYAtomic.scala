@@ -13,8 +13,8 @@ import scala.util.control.NonFatal
 /** Analyzer for the extraction of dates from queries
   * @param arguments
   */
-class MatchDateDDMMYYYYAtomic(val arguments: List[String], restricted_args: Map[String, String]) extends AbstractAtomic {
-  val prefix = arguments.headOption match {
+class MatchDateDDMMYYYYAtomic(val arguments: List[String], restrictedArgs: Map[String, String]) extends AbstractAtomic {
+  val prefix: String = arguments.headOption match {
     case Some(t) => t
     case _ => throw ExceptionAtomic("MatchDateDDMMYYYYAtomic: must have one argument")
   }

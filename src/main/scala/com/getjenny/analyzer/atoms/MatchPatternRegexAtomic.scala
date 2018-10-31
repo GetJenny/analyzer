@@ -20,8 +20,8 @@ import scala.util.control.NonFatal
   *
   * @param arguments the regular expression in the form [<name0>,..,<nameN>](<regex>)
   */
-class MatchPatternRegexAtomic(val arguments: List[String], restricted_args: Map[String, String]) extends AbstractAtomic {
-  val regex = arguments.headOption match {
+class MatchPatternRegexAtomic(val arguments: List[String], restrictedArgs: Map[String, String]) extends AbstractAtomic {
+  val regex: String = arguments.headOption match {
     case Some(t) => t
     case _ => throw ExceptionAtomic("MatchPatternRegexAtomic: must have one argument")
   }

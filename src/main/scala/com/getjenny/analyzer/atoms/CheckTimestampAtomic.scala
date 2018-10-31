@@ -13,7 +13,7 @@ import com.getjenny.analyzer.util.{ComparisonOperators, Time}
   * second argument is the operator: any of Equal, LessOrEqual, Less, Greater, GreaterOrEqual
   */
 class CheckTimestampAtomic(val arguments: List[String],
-                           restricted_args: Map[String, String]) extends AbstractAtomic {
+                           restrictedArgs: Map[String, String]) extends AbstractAtomic {
 
   val argTimestamp: Long = arguments.headOption match {
     case Some(t) => t.toLong

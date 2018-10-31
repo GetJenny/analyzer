@@ -16,7 +16,7 @@ import com.getjenny.analyzer.util.{ComparisonOperators, Time}
   *                     GMT-<N>, UT+<N> or UT-<N> where N is a number between -18 and +18. Default is CET
   */
 class CheckDayOfWeekAtomic(val arguments: List[String],
-                           restricted_args: Map[String, String]) extends AbstractAtomic {
+                           restrictedArgs: Map[String, String]) extends AbstractAtomic {
 
   val argDayOfWeek: Long = arguments.headOption match {
     case Some(t) => t.toLong

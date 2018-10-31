@@ -33,7 +33,7 @@ class DefaultFactoryAtomic extends AtomicFactoryTrait[List[String], AbstractAtom
     case "matchPatternRegex" => new MatchPatternRegexAtomic(argument, restricted_args)
     case "matchDateDDMMYYYY" => new MatchDateDDMMYYYYAtomic(argument, restricted_args)
     case "existsVariable" => new ExistsVariableAtomic(argument, restricted_args)
-    case ("distance" | "cosDistanceKeywords") => new CosineDistanceAnalyzer(argument, restricted_args)
+    case "distance" | "cosDistanceKeywords" => new CosineDistanceAnalyzer(argument, restricted_args)
     case "checkTimestamp" => new CheckTimestampAtomic(argument, restricted_args)
     case "checkDayOfWeek" => new CheckDayOfWeekAtomic(argument, restricted_args)
     case "checkDayOfMonth" => new CheckDayOfMonthAtomic(argument, restricted_args)
