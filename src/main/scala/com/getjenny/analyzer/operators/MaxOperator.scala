@@ -31,8 +31,8 @@ class MaxOperator(children: List[Expression]) extends AbstractOperator(children:
       if (l.tail.isEmpty) {
         Result(score = val1.score,
           AnalyzersDataInternal(
-            traversed_states = data.traversed_states,
-            extracted_variables = val1.data.extracted_variables,
+            traversedStates = data.traversedStates,
+            extractedVariables = val1.data.extractedVariables,
             data = val1.data.data
           )
         )

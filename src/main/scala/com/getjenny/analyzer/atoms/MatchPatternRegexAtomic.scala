@@ -32,7 +32,7 @@ class MatchPatternRegexAtomic(val arguments: List[String], restrictedArgs: Map[S
 
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     val res = Try(Result(score = 1.0,
-      AnalyzersDataInternal(traversed_states = data.traversed_states, extracted_variables = regexExtractor.evaluate(query))
+      AnalyzersDataInternal(traversedStates = data.traversedStates, extractedVariables = regexExtractor.evaluate(query))
       )) recover {
       case e: PatternExtractionNoMatchException =>
         //println("DEBUG: no match for regular expression specification(" + regex + "), query(" + query + ")")

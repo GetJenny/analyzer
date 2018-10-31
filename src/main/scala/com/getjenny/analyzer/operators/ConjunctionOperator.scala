@@ -43,8 +43,8 @@ class ConjunctionOperator(children: List[Expression]) extends AbstractOperator(c
 
         Result(score = eval.score * res.score,
           AnalyzersDataInternal(
-            traversed_states = data.traversed_states,
-            extracted_variables = eval.data.extracted_variables ++ res.data.extracted_variables,
+            traversedStates = data.traversedStates,
+            extractedVariables = eval.data.extractedVariables ++ res.data.extractedVariables,
             data = eval.data.data ++ res.data.data
           )
         )

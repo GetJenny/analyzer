@@ -49,8 +49,8 @@ class LteOperator(child: List[Expression]) extends AbstractOperator(child: List[
     val res2: Result = secondArgument.evaluate(query = query, data = data)
     val score = if(res1.score <= res2.score) 1.0 else 0.0
     val resData = AnalyzersDataInternal(
-      traversed_states = res1.data.traversed_states,
-      extracted_variables = res1.data.extracted_variables ++ res2.data.extracted_variables,
+      traversedStates = res1.data.traversedStates,
+      extractedVariables = res1.data.extractedVariables ++ res2.data.extractedVariables,
       data = res1.data.data ++ res2.data.data
     )
     Result(score=score, data = resData)
