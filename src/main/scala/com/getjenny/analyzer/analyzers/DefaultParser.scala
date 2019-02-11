@@ -94,7 +94,6 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
         // If not in quotation and have letter, add to command string accumulator
         // Then, if a parenthesis opens put the string in command
         val newCommandBuffer = if ((chars(index).isLetter || chars(index).isWhitespace) && newQuoteBalance === 0) {
-            (commandBuffer + chars(index)).filter(c => !c.isWhitespace))
           (commandBuffer + chars(index)).filter(c => !c.isWhitespace)
         } else if (!justClosedParenthesis) ""
         else commandBuffer.filter(c => !c.isWhitespace)
