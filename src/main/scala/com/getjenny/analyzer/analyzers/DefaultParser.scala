@@ -93,9 +93,7 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
         // Start reading the command
         // If not in quotation and have letter, add to command string accumulator
         // Then, if a parenthesis opens put the string in command
-        println("BEFORE chars(index): " + commandBuffer + " : " + chars(index) + " : " + justOpenedParenthesis)
         val newCommandBuffer = if ((chars(index).isLetter || chars(index).isWhitespace) && newQuoteBalance === 0) {
-          println("AFTER chars(index): " + commandBuffer + " : " + chars(index) + " : " + justOpenedParenthesis + " : " +
             (commandBuffer + chars(index)).filter(c => !c.isWhitespace))
           (commandBuffer + chars(index)).filter(c => !c.isWhitespace)
         } else if (!justClosedParenthesis) ""
@@ -112,7 +110,7 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
 
         if (justOpenedParenthesis && operatorFactory.operations(commandBuffer)) {
           // We have just read an operator.
-          println("DEBUG Adding the operator " + commandBuffer)
+          //println("DEBUG Adding the operator " + commandBuffer)
           val operator = Try(operatorFactory.get(commandBuffer, List())) recover {
             case e: NoSuchElementException =>
               throw AnalyzerCommandException("Operator does not exists(" + commandBuffer + ")", e)
@@ -127,12 +125,12 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
           throw AnalyzerCommandException("Atomic or Operator does not exists(" + commandBuffer + ")")
         } else if (atomicFactory.operations(commandBuffer) && newParenthesisBalance.head === 1 && !justClosedQuote) {
           // We are reading an atomic's argument...
-          println("DEBUG calling loop, without adding an atom, with this command buffer: " + commandBuffer + " : " + argumentAcc)
+          //println("DEBUG calling loop, without adding an atom, with this command buffer: " + commandBuffer + " : " + argumentAcc)
           loop(chars, index + 1, newParenthesisBalance, newQuoteBalance, commandBuffer,
             argumentAcc, arguments, commandTree)
         } else if (atomicFactory.operations(commandBuffer) && justClosedParenthesis) {
           // We have read all the atomic's arguments, add the atomic to the tree
-          println("DEBUG Calling loop, adding the atom: " + commandBuffer + ", " + arguments)
+          //println("DEBUG Calling loop, adding the atom: " + commandBuffer + ", " + arguments)
           val atomic = Try(atomicFactory.get(commandBuffer, arguments, restrictedArgs)) recover {
             case e: NoSuchElementException =>
               throw AnalyzerCommandException("Atomic does not exists(" + commandBuffer + ")", e)
@@ -143,11 +141,11 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
             "", List.empty[String], commandTree.add(atomic.get, newParenthesisBalance.sum))
         } else if (atomicFactory.operations(commandBuffer) && justClosedQuote && !justClosedParenthesis) {
           // We have read atomic's argument, add the argument to the list
-          println("DEBUG Calling loop, adding argument: " + commandBuffer + " <- " + argumentBuffer)
+          //println("DEBUG Calling loop, adding argument: " + commandBuffer + " <- " + argumentBuffer)
           loop(chars, index + 1, newParenthesisBalance, newQuoteBalance, commandBuffer,
             argumentAcc, arguments ::: List(argumentBuffer), commandTree)
         } else {
-          println("DEBUG going to return naked command tree... " + chars.length + " : " + commandBuffer)
+          //println("DEBUG going to return naked command tree... " + chars.length + " : " + commandBuffer)
           if (index < chars.length - 1) {
             loop(chars, index + 1, newParenthesisBalance, newQuoteBalance,
               newCommandBuffer, argumentAcc, arguments, commandTree)
