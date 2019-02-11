@@ -38,12 +38,12 @@ class DisjunctionOperator(children: List[Expression]) extends AbstractOperator(c
       l.tailOption match {
         case Some(t) =>
           if (t.nonEmpty) {
-            val comp_disj = compDisjunction(t)
-            Result(score = (1.0 - res.score) * comp_disj.score,
+            val compDisj = compDisjunction(t)
+            Result(score = (1.0 - res.score) * compDisj.score,
               AnalyzersDataInternal(
                 traversedStates = data.traversedStates,
-                extractedVariables = comp_disj.data.extractedVariables ++ res.data.extractedVariables,
-                data = comp_disj.data.data ++ res.data.data
+                extractedVariables = compDisj.data.extractedVariables ++ res.data.extractedVariables,
+                data = compDisj.data.data ++ res.data.data
               )
             )
           } else {

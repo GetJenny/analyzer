@@ -10,8 +10,8 @@ import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
   *
   * argument is a double number
   */
-class DoubleNumberAtomic(val arguments: List[String],
-                         restrictedArgs: Map[String, String]) extends AbstractAtomic {
+class ToDoubleNumberAtomic(val arguments: List[String],
+                           restrictedArgs: Map[String, String]) extends AbstractAtomic {
 
   val number: Double = arguments.headOption match {
     case Some(t) => t.toDouble

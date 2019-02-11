@@ -12,7 +12,7 @@ import Scalaz._
   */
 
 class LtOperator(child: List[Expression]) extends AbstractOperator(child: List[Expression]) {
-  require(child.length <= 2, "LtOperator can only have one Expression and a double number")
+  require(child.length <= 2, "LtOperator can only have two Expressions/Atoms as arguments")
   override def toString: String = "LtOperator(" + child.mkString(", ") + ")"
 
   def add(e: Expression, level: Int = 0): AbstractOperator = {
@@ -33,13 +33,13 @@ class LtOperator(child: List[Expression]) extends AbstractOperator(child: List[E
   }
 
   def evaluate(query: String, data: AnalyzersDataInternal = new AnalyzersDataInternal): Result = {
-    val firstArgument = child.headOption match {
+    val secondArgument = child.headOption match {
       case Some(t) => t
       case _ =>
         throw OperatorException("LtOperator: requires an expression as first argument")
     }
 
-    val secondArgument = child.tail.headOption match {
+    val firstArgument = child.tail.headOption match {
       case Some(t) => t
       case _ =>
         throw OperatorException("LtOperator: requires an expression as second argument")

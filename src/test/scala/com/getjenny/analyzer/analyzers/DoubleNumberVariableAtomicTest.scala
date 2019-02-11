@@ -50,5 +50,4 @@ class DoubleNumberVariableAtomicTest extends FlatSpec with Matchers {
       analyzer.evaluate("test query", data)
     }
   }
-
 }

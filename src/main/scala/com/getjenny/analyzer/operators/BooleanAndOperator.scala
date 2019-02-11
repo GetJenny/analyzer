@@ -27,21 +27,21 @@ class BooleanAndOperator(children: List[Expression]) extends AbstractOperator(ch
 
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     def loop(l: List[Expression]): Result = {
-      val first_res = l.headOption match {
+      val firstRes = l.headOption match {
         case Some(t) => t.evaluate(query, data)
         case _ => throw OperatorException("BooleanAndOperator: operator argument is empty")
       }
-      if (first_res.score < 1.0d) {
-        Result(score=0.0d, data = first_res.data)
+      if (firstRes.score < 1.0d) {
+        Result(score=0.0d, data = firstRes.data)
       } else if (l.tail.isEmpty) {
-        Result(score=1.0d, data = first_res.data)
+        Result(score=1.0d, data = firstRes.data)
       } else {
         val res = loop(l.tail)
         Result(score = res.score,
           AnalyzersDataInternal(
             traversedStates = data.traversedStates,
-            extractedVariables = res.data.extractedVariables ++ first_res.data.extractedVariables,
-            data = res.data.data ++ first_res.data.data
+            extractedVariables = res.data.extractedVariables ++ firstRes.data.extractedVariables,
+            data = res.data.data ++ firstRes.data.data
           )
         )
       }

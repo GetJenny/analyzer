@@ -6,7 +6,7 @@ package com.getjenny.analyzer.analyzers
 
 import org.scalatest._
 
-class DefaultAnalyzersTest extends FlatSpec with Matchers {
+class GenericAnalyzersTest extends FlatSpec with Matchers {
 
   val restrictedArgs = Map.empty[String, String]
   "A DefaultAnalyzer" should "parse a rule and evaluate the operations on a provided input text" in {

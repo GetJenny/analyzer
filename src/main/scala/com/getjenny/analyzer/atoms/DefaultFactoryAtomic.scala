@@ -23,7 +23,7 @@ class DefaultFactoryAtomic extends AtomicFactoryTrait[List[String], AbstractAtom
     "checkMonth",
     "checkHour",
     "checkMinute",
-    "double",
+    "toDouble",
     "doubleNumberVariable"
   )
 
@@ -41,7 +41,7 @@ class DefaultFactoryAtomic extends AtomicFactoryTrait[List[String], AbstractAtom
     case "checkMonth" => new CheckMonthAtomic(argument, restricted_args)
     case "checkHour" => new CheckHourAtomic(argument, restricted_args)
     case "checkMinute" => new CheckMinuteAtomic(argument, restricted_args)
-    case "double" => new DoubleNumberAtomic(argument, restricted_args)
+    case "toDouble" => new ToDoubleNumberAtomic(argument, restricted_args)
     case "doubleNumberVariable" => new DoubleNumberVariableAtomic(argument, restricted_args)
     case _ => throw ExceptionAtomic("Atom \'" + name + "\' not found")
   }
