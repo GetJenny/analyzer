@@ -33,7 +33,7 @@ class CheckMonthAtomic(val arguments: List[String],
     case _ => "CET"
   }
 
-  override def toString: String = "checkTime(\"" + argMonth + ", " + argOperator + "\")"
+  override def toString: String = "checkMonth(\"" + argMonth + ", " + argOperator + "\")"
   val isEvaluateNormalized: Boolean = true
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     val month: Long = Time.monthInt(argZone).toLong

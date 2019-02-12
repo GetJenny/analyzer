@@ -32,7 +32,7 @@ class CheckMinuteAtomic(val arguments: List[String],
     case _ => "CET"
   }
 
-  override def toString: String = "checkTime(\"" + argMinute + ", " + argOperator + "\")"
+  override def toString: String = "checkMinute(\"" + argMinute + ", " + argOperator + "\")"
   val isEvaluateNormalized: Boolean = true
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     val minute: Long = Time.minutes(argZone)

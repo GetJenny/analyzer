@@ -4,7 +4,7 @@ name := "analyzer"
 
 organization := "com.getjenny"
 
-crossScalaVersions := Seq("2.12.6", "2.11.11")
+crossScalaVersions := Seq("2.12.8", "2.11.11")
 
 resolvers ++= Seq("Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
   Resolver.bintrayRepo("hseeberger", "maven"))

@@ -24,7 +24,8 @@ class DefaultFactoryAtomic extends AtomicFactoryTrait[List[String], AbstractAtom
     "checkHour",
     "checkMinute",
     "toDouble",
-    "doubleNumberVariable"
+    "doubleNumberVariable",
+    "checkTimestampVariable"
   )
 
   override def get(name: String, argument: List[String], restricted_args: Map[String, String]):
@@ -43,6 +44,7 @@ class DefaultFactoryAtomic extends AtomicFactoryTrait[List[String], AbstractAtom
     case "checkMinute" => new CheckMinuteAtomic(argument, restricted_args)
     case "toDouble" => new ToDoubleNumberAtomic(argument, restricted_args)
     case "doubleNumberVariable" => new DoubleNumberVariableAtomic(argument, restricted_args)
+    case "checkTimestampVariable" => new CheckTimestampVariableAtomic(argument, restricted_args)
     case _ => throw ExceptionAtomic("Atom \'" + name + "\' not found")
   }
 }
