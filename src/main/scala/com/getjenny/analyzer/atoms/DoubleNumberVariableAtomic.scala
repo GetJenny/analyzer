@@ -32,26 +32,23 @@ class DoubleNumberVariableAtomic(val arguments: List[String], restrictedArgs: Ma
     * @return Result with 1.0 if the variable exists score = 0.0 otherwise
     */
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
-    val score = if(data.extractedVariables.contains(varName)) {
-      data.extractedVariables.get(varName) match {
-        case Some(value) =>
-          try {
-            value.toDouble
-          } catch {
-            case e: NumberFormatException =>
-              throw ExceptionAtomic("DoubleNumberVariableAtomic: numerical format exception " +
-                "converting string to double", e)
-            case _: Throwable =>
-              throw ExceptionAtomic("DoubleNumberVariableAtomic: unknown exception casting string to double")
-          }
-        case _ => throw ExceptionAtomic("DoubleNumberVariableAtomic: requested variable not found")
-      }
-    } else {
-      defValue match {
-        case Some(v) => v
-        case _ => throw ExceptionAtomic("DoubleNumberVariableAtomic: requested variable not found and no " +
-          "default value was provided")
-      }
+    val score = data.extractedVariables.get(varName) match {
+      case Some(value) =>
+        try {
+          value.toDouble
+        } catch {
+          case e: NumberFormatException =>
+            throw ExceptionAtomic("DoubleNumberVariableAtomic: numerical format exception " +
+              "converting string to double", e)
+          case _: Throwable =>
+            throw ExceptionAtomic("DoubleNumberVariableAtomic: unknown exception casting string to double")
+        }
+      case _ =>
+        defValue match {
+          case Some(v) => v
+          case _ => throw ExceptionAtomic("DoubleNumberVariableAtomic: requested variable not found and no " +
+            "default value was provided")
+        }
     }
     Result(score = score)
   }
