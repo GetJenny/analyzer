@@ -8,7 +8,7 @@ import com.getjenny.analyzer.interfaces._
 
 class DefaultFactoryAtomic extends AtomicFactoryTrait[List[String], AbstractAtomic, Map[String, String]] {
 
-  override val operations = Set("keyword",
+  override val operations: Set[String] = Set("keyword",
     "similar",
     "synonym",
     "regex",
@@ -28,23 +28,23 @@ class DefaultFactoryAtomic extends AtomicFactoryTrait[List[String], AbstractAtom
     "checkTimestampVariable"
   )
 
-  override def get(name: String, argument: List[String], restricted_args: Map[String, String]):
+  override def get(name: String, argument: List[String], restrictedArgs: Map[String, String]):
   AbstractAtomic = name.filter(c => !c.isWhitespace ) match {
-    case "keyword" => new KeywordAtomic(argument, restricted_args)
-    case "regex" => new RegularExpressionAtomic(argument, restricted_args)
-    case "matchPatternRegex" => new MatchPatternRegexAtomic(argument, restricted_args)
-    case "matchDateDDMMYYYY" => new MatchDateDDMMYYYYAtomic(argument, restricted_args)
-    case "existsVariable" => new ExistsVariableAtomic(argument, restricted_args)
-    case "distance" | "cosDistanceKeywords" => new CosineDistanceAnalyzer(argument, restricted_args)
-    case "checkTimestamp" => new CheckTimestampAtomic(argument, restricted_args)
-    case "checkDayOfWeek" => new CheckDayOfWeekAtomic(argument, restricted_args)
-    case "checkDayOfMonth" => new CheckDayOfMonthAtomic(argument, restricted_args)
-    case "checkMonth" => new CheckMonthAtomic(argument, restricted_args)
-    case "checkHour" => new CheckHourAtomic(argument, restricted_args)
-    case "checkMinute" => new CheckMinuteAtomic(argument, restricted_args)
-    case "toDouble" => new ToDoubleNumberAtomic(argument, restricted_args)
-    case "doubleNumberVariable" => new DoubleNumberVariableAtomic(argument, restricted_args)
-    case "checkTimestampVariable" => new CheckTimestampVariableAtomic(argument, restricted_args)
+    case "keyword" => new KeywordAtomic(argument, restrictedArgs)
+    case "regex" => new RegularExpressionAtomic(argument, restrictedArgs)
+    case "matchPatternRegex" => new MatchPatternRegexAtomic(argument, restrictedArgs)
+    case "matchDateDDMMYYYY" => new MatchDateDDMMYYYYAtomic(argument, restrictedArgs)
+    case "existsVariable" => new ExistsVariableAtomic(argument, restrictedArgs)
+    case "distance" | "cosDistanceKeywords" => new CosineDistanceAnalyzer(argument, restrictedArgs)
+    case "checkTimestamp" => new CheckTimestampAtomic(argument, restrictedArgs)
+    case "checkDayOfWeek" => new CheckDayOfWeekAtomic(argument, restrictedArgs)
+    case "checkDayOfMonth" => new CheckDayOfMonthAtomic(argument, restrictedArgs)
+    case "checkMonth" => new CheckMonthAtomic(argument, restrictedArgs)
+    case "checkHour" => new CheckHourAtomic(argument, restrictedArgs)
+    case "checkMinute" => new CheckMinuteAtomic(argument, restrictedArgs)
+    case "toDouble" => new ToDoubleNumberAtomic(argument, restrictedArgs)
+    case "doubleNumberVariable" => new DoubleNumberVariableAtomic(argument, restrictedArgs)
+    case "checkTimestampVariable" => new CheckTimestampVariableAtomic(argument, restrictedArgs)
     case _ => throw ExceptionAtomic("Atom \'" + name + "\' not found")
   }
 }

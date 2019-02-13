@@ -11,7 +11,7 @@ import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
   * @param arguments name of the variable to be checked
   */
 class ExistsVariableAtomic(val arguments: List[String], restrictedArgs: Map[String, String]) extends AbstractAtomic {
-  val varName = arguments.headOption match {
+  val varName: String = arguments.headOption match {
     case Some(t) => t
     case _ => throw ExceptionAtomic("ExistsVariableAtomic: must have one argument")
   }

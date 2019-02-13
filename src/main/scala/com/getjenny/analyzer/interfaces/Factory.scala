@@ -5,11 +5,11 @@ package com.getjenny.analyzer.interfaces
   */
 
 trait OperatorFactoryTrait[T, V] {
-  val operations = Set[String]()
+  val operations: Set[String] = Set[String]()
   def get(name: String, argument: T): V
 }
 
 trait AtomicFactoryTrait[T, V, Z] {
-  val operations = Set[String]()
+  val operations: Set[String] = Set[String]()
   def get(name: String, argument: T, restricted_args: Z): V
 }

@@ -11,7 +11,7 @@ import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
   * "foo.*" matches "pippo and pluto" and "fooish and bar"
   */
 class KeywordAtomic(val arguments: List[String], restrictedArgs: Map[String, String]) extends AbstractAtomic {
-  val keyword = arguments.headOption match {
+  val keyword: String = arguments.headOption match {
     case Some(t) => t
     case _ => throw ExceptionAtomic("KeywordAtomic: must have one argument")
   }

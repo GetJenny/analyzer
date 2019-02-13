@@ -20,7 +20,7 @@ class MatchDateDDMMYYYYAtomic(val arguments: List[String], restrictedArgs: Map[S
   }
   override def toString: String = "matchDateDDMMYYYY(" + prefix + ")"
   val isEvaluateNormalized: Boolean = true
-  val regex = """[""" + prefix + """day,""" + prefix + """month,""" + prefix + """year]""" +
+  val regex: String = """[""" + prefix + """day,""" + prefix + """month,""" + prefix + """year]""" +
     """(?:(?:[^0-9]+|\A)(0[1-9]|[12][0-9]|3[01])(?:[- \/\.])(0[1-9]|1[012])(?:[- \/\.])((?:19|20)\d\d)(?:[^0-9]+|$))"""
 
   /** PatternExtractionRegex is a pattern extraction utility class */

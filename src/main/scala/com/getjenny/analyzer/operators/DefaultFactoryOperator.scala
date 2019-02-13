@@ -9,7 +9,7 @@ import com.getjenny.analyzer.interfaces._
 
 class DefaultFactoryOperator extends OperatorFactoryTrait[List[Expression], AbstractOperator] {
 
-  override val operations = Set(
+  override val operations: Set[String] = Set(
     "or",
     "and",
     "conjunction",
