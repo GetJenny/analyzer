@@ -9,17 +9,21 @@ crossScalaVersions := Seq("2.12.8", "2.11.11")
 resolvers ++= Seq("Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
   Resolver.bintrayRepo("hseeberger", "maven"))
 
+resolvers += Resolver.sonatypeRepo("snapshots")
+
 libraryDependencies ++= {
   val BreezeVersion	= "0.13.2"
   val ScalatestVersion	= "3.0.5"
   val ScalazVersion	= "7.2.24"
   val ScoptVersion	= "3.7.0"
+  val SprayJsonVersion = "1.3.5"
   Seq(
     "com.github.scopt" %% "scopt" % ScoptVersion,
     "org.scalanlp" %% "breeze" % BreezeVersion,
     "org.scalanlp" %% "breeze-natives" % BreezeVersion,
     "org.scalatest" %% "scalatest" % ScalatestVersion % Test,
-    "org.scalaz" %% "scalaz-core" % ScalazVersion
+    "org.scalaz" %% "scalaz-core" % ScalazVersion,
+    "io.spray" %%  "spray-json" % SprayJsonVersion
   )
 }
 
