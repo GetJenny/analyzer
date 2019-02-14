@@ -12,12 +12,12 @@ class MultiStateOpeningTimeTest extends FlatSpec with Matchers {
 
   val data = AnalyzersDataInternal(extractedVariables = Map[String, String]("GJ_SERVICEOPEN_SERVICE1" ->
     """{
-      |  "OpenTime": "00:00",
-      |  "CloseTime": "23:59",
-      |  "Timezone": "CET",
-      |  "Months": [1,2,3,4,5,6,7,8,9,10,11,12],
-      |  "Days": [],
-      |  "WeekDays": [1,2,3,4,5,6,7]
+      |  "openTime": "00:00",
+      |  "closeTime": "23:59",
+      |  "timezone": "CET",
+      |  "months": [1,2,3,4,5,6,7,8,9,10,11,12],
+      |  "days": [],
+      |  "weekDays": [1,2,3,4,5,6,7]
       |}""".stripMargin
   ))
 

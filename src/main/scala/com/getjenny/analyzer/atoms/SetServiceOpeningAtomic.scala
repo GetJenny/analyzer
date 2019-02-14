@@ -39,12 +39,12 @@ class SetServiceOpeningAtomic(val arguments: List[String],
     }.filterKeys(_ =/= "").map{ case(k, v) =>
       (k, JsonToEntities.openingTime(v))
     }.map{ case(k, v) =>
-      val hourMin = v.OpenTime.take(2).toInt
-      val hourMax = v.CloseTime.take(2).toInt
-      val minutesMin = v.OpenTime.takeRight(2).toInt
-      val minutesMax = v.CloseTime.takeRight(2).toInt
+      val hourMin = v.openTime.take(2).toInt
+      val hourMax = v.closeTime.take(2).toInt
+      val minutesMin = v.openTime.takeRight(2).toInt
+      val minutesMax = v.closeTime.takeRight(2).toInt
 
-      val timezone = v.Timezone
+      val timezone = v.timezone
       val hour = Time.hour(timezone)
       val minutes = Time.minutes(timezone)
       val month = Time.monthInt(timezone)
@@ -52,11 +52,11 @@ class SetServiceOpeningAtomic(val arguments: List[String],
       val weekday = Time.dayOfWeekInt(timezone)
 
       val isOpen: Boolean = hour >= hourMin && hour <= hourMax && minutes >= minutesMin && minutes <= minutesMax &&
-        (v.Months.isEmpty || v.Months.contains(month)) &&
-        (v.Days.isEmpty || v.Days.contains(day)) &&
-        (v.WeekDays.isEmpty || v.WeekDays.contains(weekday))
+        (v.months.isEmpty || v.months.contains(month)) &&
+        (v.days.isEmpty || v.days.contains(day)) &&
+        (v.weekDays.isEmpty || v.weekDays.contains(weekday))
       (k, isOpen)
-    }.filter(_._2)
+    }.filter{case(_, v) => v}
 
     val serviceOpenVariable: Map[String, Map[String, Boolean]] = Map("__GJ_INTERNAL_SERVICEOPEN__" -> variables)
     val newData = AnalyzersDataInternal(
