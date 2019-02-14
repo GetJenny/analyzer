@@ -1,6 +1,7 @@
 package com.getjenny.analyzer.atoms
 
 import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
+import scala.util.control.NonFatal
 
 /**
   * Created by angelo on 11/02/19.
@@ -40,8 +41,8 @@ class DoubleNumberVariableAtomic(val arguments: List[String], restrictedArgs: Ma
           case e: NumberFormatException =>
             throw ExceptionAtomic("DoubleNumberVariableAtomic: numerical format exception " +
               "converting string to double", e)
-          case _: Throwable =>
-            throw ExceptionAtomic("DoubleNumberVariableAtomic: unknown exception casting string to double")
+          case NonFatal(e) =>
+            throw ExceptionAtomic("DoubleNumberVariableAtomic: exception casting string to double: " + e.getMessage)
         }
       case _ =>
         defValue match {

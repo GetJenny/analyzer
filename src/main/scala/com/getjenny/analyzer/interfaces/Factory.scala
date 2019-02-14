@@ -11,5 +11,5 @@ trait OperatorFactoryTrait[T, V] {
 
 trait AtomicFactoryTrait[T, V, Z] {
   val operations: Set[String] = Set[String]()
-  def get(name: String, argument: T, restricted_args: Z): V
+  def get(name: String, argument: T, restrictedArgs: Z): V
 }

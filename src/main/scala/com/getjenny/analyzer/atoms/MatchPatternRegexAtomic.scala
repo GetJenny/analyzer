@@ -34,12 +34,12 @@ class MatchPatternRegexAtomic(val arguments: List[String], restrictedArgs: Map[S
     val res = Try(Result(score = 1.0,
       AnalyzersDataInternal(traversedStates = data.traversedStates, extractedVariables = regexExtractor.evaluate(query))
       )) recover {
-      case e: PatternExtractionNoMatchException =>
+      case _: PatternExtractionNoMatchException =>
         //println("DEBUG: no match for regular expression specification(" + regex + "), query(" + query + ")")
         Result(score=0)
       case NonFatal(e) =>
         throw ExceptionAtomic("Parsing of regular expression specification(" + regex + "), query(" + query + ")", e)
     }
-    res.get
+    res.getOrElse(Result(score=0))
   }
 }
