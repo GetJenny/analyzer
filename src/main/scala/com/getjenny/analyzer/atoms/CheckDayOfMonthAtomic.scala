@@ -36,7 +36,7 @@ class CheckDayOfMonthAtomic(val arguments: List[String],
   override def toString: String = "checkTime(\"" + argDayOfMonth + ", " + argOperator + "\")"
   val isEvaluateNormalized: Boolean = true
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
-    val month = Time.monthInt(argZone).toLong
+    val month = Time.dayOfMonth(argZone).toLong
     if(ComparisonOperators.compare(month, argDayOfMonth, argOperator))
       Result(score = 1.0)
     else
