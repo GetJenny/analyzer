@@ -28,7 +28,7 @@ class BooleanAndOperator(children: List[Expression]) extends AbstractOperator(ch
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     def loop(l: List[Expression]): Result = {
       val firstRes = l.headOption match {
-        case Some(t) => t.evaluate(query, data)
+        case Some(t) => t.matches(query, data)
         case _ => throw OperatorException("BooleanAndOperator: operator argument is empty")
       }
       if (firstRes.score < 1.0d) {
