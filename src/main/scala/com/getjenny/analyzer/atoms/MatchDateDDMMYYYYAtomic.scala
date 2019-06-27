@@ -36,7 +36,10 @@ class MatchDateDDMMYYYYAtomic(val arguments: List[String], restrictedArgs: Map[S
     */
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     val res = Try(Result(score = 1.0,
-        AnalyzersDataInternal(traversedStates = data.traversedStates, extractedVariables = regexExtractor.evaluate(query))
+        AnalyzersDataInternal(
+          context = data.context,
+          traversedStates = data.traversedStates,
+          extractedVariables = regexExtractor.evaluate(query))
       )) recover {
       case _: PatternExtractionNoMatchException =>
         Result(score=0)

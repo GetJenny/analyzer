@@ -50,6 +50,7 @@ class GteOperator(child: List[Expression]) extends AbstractOperator(child: List[
     val score = if(res1.score >= res2.score) 1.0 else 0.0
     val resData = AnalyzersDataInternal(
       traversedStates = res1.data.traversedStates,
+      context = res1.data.context,
       extractedVariables = res1.data.extractedVariables ++ res2.data.extractedVariables,
       data = res1.data.data ++ res2.data.data
     )

@@ -60,6 +60,7 @@ class SetServiceOpeningAtomic(val arguments: List[String],
 
     val serviceOpenVariable: Map[String, Map[String, Boolean]] = Map("__GJ_INTERNAL_SERVICEOPEN__" -> variables)
     val newData = AnalyzersDataInternal(
+      context = data.context,
       traversedStates = data.traversedStates,
       extractedVariables = data.extractedVariables,
       data = data.data ++ serviceOpenVariable
