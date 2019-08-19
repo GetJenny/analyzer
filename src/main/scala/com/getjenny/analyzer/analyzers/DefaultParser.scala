@@ -56,10 +56,10 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
       */
     def escapeChar(chars: List[Char], i: Int): Boolean = chars(i-1) === '\\' && chars(i-2) =/= '\\'
 
+    @scala.annotation.tailrec
     def loop(chars: List[Char], index: Int, parenthesisBalance: List[Int], quoteBalance: Int,
              commandBuffer: String, argumentBuffer: String, arguments: List[String],
              commandTree: AbstractOperator):  AbstractOperator = {
-
       if (index >= chars.length && chars.nonEmpty) {
         if (quoteBalance < 0)
           throw AnalyzerParsingException("Parsing error: quotes are not balanced")
@@ -70,6 +70,8 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
       } else {
         val justOpenedParenthesis = chars(index) === '(' && !escapeChar(chars, index) && quoteBalance === 0
         val justClosedParenthesis = chars(index) === ')' && !escapeChar(chars, index) && quoteBalance === 0
+        //println("DEBUG justOpenedParenthesis " + justOpenedParenthesis)
+        //println("DEBUG justClosedParenthesis " + justClosedParenthesis)
 
         val newParenthesisBalance: List[Int] = {
           // if a parenthesis is inside double quotes does not count
@@ -77,6 +79,7 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
           else if (justClosedParenthesis) -1 :: parenthesisBalance
           else parenthesisBalance
         }
+        //println("DEBUG newParenthesisBalance " + newParenthesisBalance)
 
         // new_quote_balance > 0 if text in a quotation
         val justOpenedQuote = chars(index) === '"' && !escapeChar(chars, index) && quoteBalance === 0
@@ -95,7 +98,7 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
         // Then, if a parenthesis opens put the string in command
         val newCommandBuffer = if ((chars(index).isLetter || chars(index).isWhitespace) && newQuoteBalance === 0) {
           (commandBuffer + chars(index)).filter(c => !c.isWhitespace)
-        } else if (!justClosedParenthesis) ""
+        } else if (justClosedQuote) ""
         else commandBuffer.filter(c => !c.isWhitespace)
 
         // Now read the argument of the command
@@ -122,14 +125,14 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
         } else if (!atomicFactory.operations(commandBuffer) && !operatorFactory.operations(commandBuffer) &&
           newParenthesisBalance.headOption.getOrElse(0) === 1 && justOpenedParenthesis) {
           throw AnalyzerCommandException("Atomic or Operator does not exists(" + commandBuffer + ")")
-        } else if (atomicFactory.operations(commandBuffer) && newParenthesisBalance.head === 1 && !justClosedQuote) {
+        } else if (atomicFactory.operations(commandBuffer) && newParenthesisBalance.head === 1 && !justClosedQuote && quoteBalance === 1) {
           // We are reading an atomic's argument...
-          //println("DEBUG calling loop, without adding an atom, with this command buffer: " + commandBuffer + " : " + argumentAcc)
+          //println("DEBUG calling loop, without adding an atom, with this command buffer: " + commandBuffer + " and argumentAcc: " + argumentAcc)
           loop(chars, index + 1, newParenthesisBalance, newQuoteBalance, commandBuffer,
             argumentAcc, arguments, commandTree)
         } else if (atomicFactory.operations(commandBuffer) && justClosedParenthesis) {
           // We have read all the atomic's arguments, add the atomic to the tree
-          //println("DEBUG Calling loop, adding the atom: " + commandBuffer + ", " + arguments)
+          //println("DEBUG Calling loop, adding the atom: " + commandBuffer + ", w/ arguments" + arguments)
           val atomic = Try(atomicFactory.get(commandBuffer, arguments, restrictedArgs)) recover {
             case e: NoSuchElementException =>
               throw AnalyzerCommandException("Atomic does not exists(" + commandBuffer + ")", e)
@@ -144,7 +147,7 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
           loop(chars, index + 1, newParenthesisBalance, newQuoteBalance, commandBuffer,
             argumentAcc, arguments ::: List(argumentBuffer), commandTree)
         } else {
-          //println("DEBUG going to return naked command tree... " + chars.length + " : " + commandBuffer)
+          //println("DEBUG going to return naked command tree... " + chars.length + " : " + newCommandBuffer)
           if (index < chars.length - 1) {
             loop(chars, index + 1, newParenthesisBalance, newQuoteBalance,
               newCommandBuffer, argumentAcc, arguments, commandTree)
