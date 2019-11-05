@@ -26,7 +26,7 @@ import com.getjenny.analyzer.expressions._
   * Created by mario@getjenny.com on 21/02/2017.
   *
   */
-abstract class AbstractOperator(children: List[Expression]) extends Expression {
+abstract class AbstractOperator(children: List[Expression]) extends Expression(children) {
   /** Possible implementation:
     ```scala
     def add(e: Expression, level: Int = 0): AbstractOperator = {

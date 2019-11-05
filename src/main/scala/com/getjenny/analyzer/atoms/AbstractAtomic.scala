@@ -15,6 +15,6 @@ import com.getjenny.analyzer.expressions._
   *
   *  NB New atomic must be registered in
   */
-abstract class AbstractAtomic extends Expression {
+abstract class AbstractAtomic extends Expression(List.empty[Expression]) {
   val isEvaluateNormalized: Boolean  // does "evaluate" return normalized values?
 }
