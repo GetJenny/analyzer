@@ -40,6 +40,9 @@ abstract class DefaultParser(command: String, restrictedArgs: Map[String, String
     res
   }
 
+  def firstOccurrenceOfOperator(operatorName:String):Option[Expression] = {
+    operator.findOccurrencesOfOperator(operatorName).headOption
+  }
   /**Produces nested operators
     *
     * e.g.
