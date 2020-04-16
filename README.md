@@ -1,5 +1,5 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8f984a2278b548f19f7896adaef054d2)](https://www.codacy.com/app/GetJenny/analyzer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=GetJenny/analyzer&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/8f984a2278b548f19f7896adaef054d2)](https://www.codacy.com/app/GetJenny/analyzer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=GetJenny/analyzer&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8aa198cbdf924c7aa338d753097885c9)](https://www.codacy.com/gh/GetJenny/analyzer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=GetJenny/analyzer&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/8aa198cbdf924c7aa338d753097885c9)](https://www.codacy.com/gh/GetJenny/analyzer?utm_source=github.com&utm_medium=referral&utm_content=GetJenny/analyzer&utm_campaign=Badge_Coverage)
 [![Build Status](https://travis-ci.org/GetJenny/analyzer.png)](https://travis-ci.org/GetJenny/analyzer)
 [![Project status](https://img.shields.io/badge/status-active-brightgreen.svg)](#status)
 [![Join the chat at https://gitter.im/GetJenny-StarChat/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/GetJenny-StarChat/Lobby)
