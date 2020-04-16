@@ -14,7 +14,7 @@ stages:
   - name: compile
   - name: test
   - name: publish
-    if: (tag IS present) AND NOT fork
+    if: ((branch = master AND type = push) OR (tag IS present)) AND NOT fork
 
 jobs:
   include:
@@ -26,7 +26,7 @@ jobs:
       script: sbt ++$TRAVIS_SCALA_VERSION coverage test coverageReport
     - stage: publish
       name: "Publish to oss.sonatype.org"
-      script: sbt ci-release
+      script: sbt ++$TRAVIS_SCALA_VERSION ci-release
 
 notifications:
   webhooks:

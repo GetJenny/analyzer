@@ -78,7 +78,5 @@ developers := List(
   )
 )
 
-usePgpKeyHex("529FF4723354D7554E62004EE24675FEA2F41850")
-
 licenses := Seq(("GPLv2", url("https://www.gnu.org/licenses/old-licenses/gpl-2.0.md")))
 
