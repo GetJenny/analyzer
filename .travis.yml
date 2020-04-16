@@ -14,8 +14,7 @@ stages:
   - name: compile
   - name: test
   - name: publish
-    on:
-      tags: true
+    if: (tag IS present) AND NOT fork
 
 jobs:
   include:
