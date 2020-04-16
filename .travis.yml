@@ -21,7 +21,8 @@ notifications:
 
 deploy:
   provider: script
-  script: bash publish.sh
+  script:
+    - sbt ci-release
   on:
     tags: true
 
