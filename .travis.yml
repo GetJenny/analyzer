@@ -10,6 +10,25 @@ script:
    - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
    - bash <(curl -Ls https://coverage.codacy.com/get.sh)
 
+stages:
+  - name: compile
+  - name: test
+  - name: publish
+    on:
+      tags: true
+
+jobs:
+  include:
+    - stage: compile
+      name: "Compile project"
+      script: sbt ++$TRAVIS_SCALA_VERSION clean compile
+    - stage: test
+      name: "Run tests"
+      script: sbt ++$TRAVIS_SCALA_VERSION coverage test coverageReport
+    - stage: publish
+      name: "Ppublish to oss.sonatype.org"
+      script: sbt ci-release
+
 notifications:
   webhooks:
     urls:
@@ -17,11 +36,4 @@ notifications:
     on_success: change
     on_failure: always
     on_start: never
-
-deploy:
-  provider: script
-  script:
-    - sbt ci-release
-  on:
-    tags: true
 
