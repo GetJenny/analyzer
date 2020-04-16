@@ -6,10 +6,6 @@ scala:
 jdk:
    - openjdk11
 
-script:
-   - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
-   - bash <(curl -Ls https://coverage.codacy.com/get.sh)
-
 stages:
   - name: compile
   - name: test
@@ -23,7 +19,9 @@ jobs:
       script: sbt ++$TRAVIS_SCALA_VERSION clean compile
     - stage: test
       name: "Run tests"
-      script: sbt ++$TRAVIS_SCALA_VERSION coverage test coverageReport
+      script:
+        - sbt ++$TRAVIS_SCALA_VERSION coverage test coverageReport
+        - bash <(curl -Ls https://coverage.codacy.com/get.sh) 
     - stage: publish
       name: "Publish to oss.sonatype.org"
       script: sbt ++$TRAVIS_SCALA_VERSION ci-release
