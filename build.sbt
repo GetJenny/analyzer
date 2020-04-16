@@ -3,18 +3,19 @@ import NativePackagerHelper._
 name := "analyzer"
 
 organization := "com.getjenny"
+maintainer := "angelo@getjenny.com"
 
-crossScalaVersions := Seq("2.12.8", "2.11.11")
+crossScalaVersions := Seq("2.12.10")
 
-resolvers ++= Seq("Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+resolvers ++= Seq("Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/",
   Resolver.bintrayRepo("hseeberger", "maven"))
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= {
-  val BreezeVersion	= "0.13.2"
-  val ScalatestVersion	= "3.0.5"
-  val ScalazVersion	= "7.2.24"
+  val BreezeVersion	= "1.0"
+  val ScalatestVersion	= "3.1.1"
+  val ScalazVersion	= "7.2.30"
   val ScoptVersion	= "3.7.0"
   val SprayJsonVersion = "1.3.5"
   Seq(
@@ -77,11 +78,7 @@ developers := List(
   )
 )
 
-releaseProcess := Seq[ReleaseStep](
-		releaseStepCommand("sonatypeOpen \"com.getjenny\" \"analyzer\""),
-		releaseStepCommand("publishSigned"),
-		releaseStepCommand("sonatypeRelease")
-)
+usePgpKeyHex("529FF4723354D7554E62004EE24675FEA2F41850")
 
 licenses := Seq(("GPLv2", url("https://www.gnu.org/licenses/old-licenses/gpl-2.0.md")))
 
