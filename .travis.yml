@@ -26,7 +26,7 @@ jobs:
       name: "Run tests"
       script: sbt ++$TRAVIS_SCALA_VERSION coverage test coverageReport
     - stage: publish
-      name: "Ppublish to oss.sonatype.org"
+      name: "Publish to oss.sonatype.org"
       script: sbt ci-release
 
 notifications:
