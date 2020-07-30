@@ -1,8 +1,7 @@
 package com.getjenny.analyzer.operators
 
 import com.getjenny.analyzer.expressions._
-import scalaz._
-import Scalaz._
+import scalaz.Scalaz._
 
 /**
   * Created by mal on 21/02/2017.
@@ -25,28 +24,44 @@ class BooleanAndOperator(children: List[Expression]) extends AbstractOperator(ch
     }
   }
 
-  def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
-    def loop(l: List[Expression]): Result = {
-      val firstRes = l.headOption match {
-        case Some(t) => t.matches(query, data)
-        case _ => throw OperatorException("BooleanAndOperator: operator argument is empty")
-      }
-      if (firstRes.score < 1.0d) {
-        Result(score=0.0d, data = firstRes.data)
-      } else if (l.tail.isEmpty) {
-        Result(score=1.0d, data = firstRes.data)
-      } else {
-        val res = loop(l.tail)
-        Result(score = res.score,
+  def evaluate(query: String, analyzersDataInternal: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
+    def booleanAnd(l: List[Expression]): Result = {
+      val valHead = l(0).matches(query, analyzersDataInternal)
+      if (l.tail.isEmpty) {
+        Result(score = valHead.score,
           AnalyzersDataInternal(
-            context = data.context,
-            traversedStates = data.traversedStates,
-            extractedVariables = res.data.extractedVariables ++ firstRes.data.extractedVariables,
-            data = res.data.data ++ firstRes.data.data
+            context = analyzersDataInternal.context,
+            traversedStates = analyzersDataInternal.traversedStates,
+            // map summation order is important, as valHead elements must override pre-existing elements
+            extractedVariables = analyzersDataInternal.extractedVariables ++ valHead.data.extractedVariables,
+            data = analyzersDataInternal.data ++ valHead.data.data
           )
         )
+      } else {
+        val valTail = booleanAnd(l.tail)
+        val finalScore = valHead.score * valTail.score
+        if (finalScore  < 1.0d) {
+          Result(score = finalScore,
+            AnalyzersDataInternal(
+              context = analyzersDataInternal.context,
+              traversedStates = analyzersDataInternal.traversedStates,
+              extractedVariables = analyzersDataInternal.extractedVariables,
+              data = analyzersDataInternal.data
+            )
+          )
+        } else {
+          Result(score = finalScore,
+            AnalyzersDataInternal(
+              context = analyzersDataInternal.context,
+              traversedStates = analyzersDataInternal.traversedStates,
+              // map summation order is important, as valHead elements must override valTail existing elements
+              extractedVariables = valTail.data.extractedVariables ++ valHead.data.extractedVariables,
+              data = valTail.data.data ++ valHead.data.data
+            )
+          )
+        }
       }
     }
-    loop(children)
+    booleanAnd(children)
   }
 }

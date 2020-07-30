@@ -1,8 +1,7 @@
 package com.getjenny.analyzer.operators
 
 import com.getjenny.analyzer.expressions._
-import scalaz._
-import Scalaz._
+import scalaz.Scalaz._
 
 /** Not Operator
   *
@@ -36,11 +35,11 @@ class BooleanNotOperator(child: List[Expression]) extends AbstractOperator(child
     }
   }
 
-  def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
+  def evaluate(query: String, analyzersDataInternal: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     val res = child.headOption match {
-      case Some(arg) => arg.matches(query, data)
+      case Some(arg) => arg.matches(query, analyzersDataInternal)
       case _ => throw OperatorException("BooleanNotOperator: inner expression is empty")
     }
-    Result(score=1 - res.score, data = res.data)
+    Result(score = 1 - res.score, data = analyzersDataInternal)
   }
 }
