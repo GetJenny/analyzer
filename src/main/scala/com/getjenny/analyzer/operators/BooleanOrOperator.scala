@@ -25,25 +25,28 @@ class BooleanOrOperator(children: List[Expression]) extends AbstractOperator(chi
     }
   }
 
-  def evaluate(query: String, analyzersDataInternal: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
+  def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     def booleanOr(l: List[Expression]): Result = {
-      val res = l(0).matches(query, analyzersDataInternal)
+      val res = l.headOption match {
+        case Some(arg) => arg.matches(query, data)
+        case _ => throw OperatorException("BooleanOrOperator: inner expression is empty")
+      }
       if (l.tail.isEmpty) {
         Result(score = 1.0d - res.score,
           AnalyzersDataInternal(
-            context = analyzersDataInternal.context,
-            traversedStates = analyzersDataInternal.traversedStates,
+            context = data.context,
+            traversedStates = data.traversedStates,
             // map summation order is important, as res elements must override pre-existing elements
-            extractedVariables = analyzersDataInternal.extractedVariables ++ res.data.extractedVariables,
-            data = analyzersDataInternal.data ++ res.data.data
+            extractedVariables = data.extractedVariables ++ res.data.extractedVariables,
+            data = data.data ++ res.data.data
           )
         )
       } else {
         val resTail = booleanOr(l.tail)
         Result(score = (1.0d - res.score) * resTail.score,
           AnalyzersDataInternal(
-            context = analyzersDataInternal.context,
-            traversedStates = analyzersDataInternal.traversedStates,
+            context = data.context,
+            traversedStates = data.traversedStates,
             // map summation order is important, as res elements must override resTail existing elements
             extractedVariables = resTail.data.extractedVariables ++ res.data.extractedVariables,
             data = resTail.data.data ++ res.data.data
@@ -56,7 +59,7 @@ class BooleanOrOperator(children: List[Expression]) extends AbstractOperator(chi
     if (finalScore < 1.0d) {
       Result(
         score = finalScore,
-        data = analyzersDataInternal
+        data = data
       )
     } else {
       Result(

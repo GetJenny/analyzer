@@ -24,36 +24,39 @@ class BooleanAndOperator(children: List[Expression]) extends AbstractOperator(ch
     }
   }
 
-  def evaluate(query: String, analyzersDataInternal: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
+  def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     def booleanAnd(l: List[Expression]): Result = {
-      val valHead = l(0).matches(query, analyzersDataInternal)
+      val valHead = l.headOption match {
+        case Some(arg) => arg.matches(query, data)
+        case _ => throw OperatorException("BooleanAndOperator: inner expression is empty")
+      }
       if (l.tail.isEmpty) {
         Result(score = valHead.score,
           AnalyzersDataInternal(
-            context = analyzersDataInternal.context,
-            traversedStates = analyzersDataInternal.traversedStates,
+            context = data.context,
+            traversedStates = data.traversedStates,
             // map summation order is important, as valHead elements must override pre-existing elements
-            extractedVariables = analyzersDataInternal.extractedVariables ++ valHead.data.extractedVariables,
-            data = analyzersDataInternal.data ++ valHead.data.data
+            extractedVariables = data.extractedVariables ++ valHead.data.extractedVariables,
+            data = data.data ++ valHead.data.data
           )
         )
       } else {
         val valTail = booleanAnd(l.tail)
         val finalScore = valHead.score * valTail.score
-        if (finalScore  < 1.0d) {
+        if (finalScore  =/= 1.0d) {
           Result(score = finalScore,
             AnalyzersDataInternal(
-              context = analyzersDataInternal.context,
-              traversedStates = analyzersDataInternal.traversedStates,
-              extractedVariables = analyzersDataInternal.extractedVariables,
-              data = analyzersDataInternal.data
+              context = data.context,
+              traversedStates = data.traversedStates,
+              extractedVariables = data.extractedVariables,
+              data = data.data
             )
           )
         } else {
           Result(score = finalScore,
             AnalyzersDataInternal(
-              context = analyzersDataInternal.context,
-              traversedStates = analyzersDataInternal.traversedStates,
+              context = data.context,
+              traversedStates = data.traversedStates,
               // map summation order is important, as valHead elements must override valTail existing elements
               extractedVariables = valTail.data.extractedVariables ++ valHead.data.extractedVariables,
               data = valTail.data.data ++ valHead.data.data

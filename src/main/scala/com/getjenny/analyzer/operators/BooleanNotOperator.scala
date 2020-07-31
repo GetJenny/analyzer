@@ -35,11 +35,11 @@ class BooleanNotOperator(child: List[Expression]) extends AbstractOperator(child
     }
   }
 
-  def evaluate(query: String, analyzersDataInternal: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
+  def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     val res = child.headOption match {
-      case Some(arg) => arg.matches(query, analyzersDataInternal)
+      case Some(arg) => arg.matches(query, data)
       case _ => throw OperatorException("BooleanNotOperator: inner expression is empty")
     }
-    Result(score = 1 - res.score, data = analyzersDataInternal)
+    Result(score = 1 - res.score, data = data)
   }
 }

@@ -25,24 +25,27 @@ class DisjunctionOperator(children: List[Expression]) extends AbstractOperator(c
     }
   }
 
-  def evaluate(query: String, analyzersDataInternal: AnalyzersDataInternal = new AnalyzersDataInternal): Result = {
+  def evaluate(query: String, data: AnalyzersDataInternal = new AnalyzersDataInternal): Result = {
     def compDisjunction(l: List[Expression]): Result = {
-      val res = l(0).evaluate(query, analyzersDataInternal)
+      val res = l.headOption match {
+        case Some(arg) => arg.evaluate(query, data)
+        case _ => throw OperatorException("DisjunctionOperator: inner expression is empty")
+      }
       if (l.tail.isEmpty) {
         Result(score = 1.0d - res.score,
           AnalyzersDataInternal(
-            context = analyzersDataInternal.context,
-            traversedStates = analyzersDataInternal.traversedStates,
-            extractedVariables = analyzersDataInternal.extractedVariables ++ res.data.extractedVariables,
-            data = analyzersDataInternal.data ++ res.data.data
+            context = data.context,
+            traversedStates = data.traversedStates,
+            extractedVariables = data.extractedVariables ++ res.data.extractedVariables,
+            data = data.data ++ res.data.data
           )
         )
       } else {
         val resTail = compDisjunction(l.tail)
         Result(score = (1.0d - res.score) * resTail.score,
           AnalyzersDataInternal(
-            context = analyzersDataInternal.context,
-            traversedStates = analyzersDataInternal.traversedStates,
+            context = data.context,
+            traversedStates = data.traversedStates,
             // map summation order is important, as res elements must override resTail existing elements
             extractedVariables = resTail.data.extractedVariables ++ res.data.extractedVariables,
             data = resTail.data.data ++ res.data.data
@@ -55,7 +58,7 @@ class DisjunctionOperator(children: List[Expression]) extends AbstractOperator(c
     if (equiv(finalScore, 0.0d)) {
       Result(
         score = finalScore,
-        data = analyzersDataInternal
+        data = data
       )
     } else {
       Result(

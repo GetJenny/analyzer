@@ -28,17 +28,20 @@ class ConjunctionOperator(children: List[Expression]) extends AbstractOperator(c
     }
   }
 
-  def evaluate(query: String, analyzersDataInternal: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
+  def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     def conjunction(l: List[Expression]): Result = {
-      val valHead = l(0).evaluate(query, analyzersDataInternal)
+      val valHead = l.headOption match {
+        case Some(arg) => arg.evaluate(query, data)
+        case _ => throw OperatorException("ConjunctionOperator: inner expression is empty")
+      }
       if (l.tail.isEmpty) {
         Result(score = valHead.score,
           AnalyzersDataInternal(
-            context = analyzersDataInternal.context,
-            traversedStates = analyzersDataInternal.traversedStates,
+            context = data.context,
+            traversedStates = data.traversedStates,
             // map summation order is important, as valHead elements must override pre-existing elements
-            extractedVariables = analyzersDataInternal.extractedVariables ++ valHead.data.extractedVariables,
-            data = analyzersDataInternal.data ++ valHead.data.data
+            extractedVariables = data.extractedVariables ++ valHead.data.extractedVariables,
+            data = data.data ++ valHead.data.data
           )
         )
       } else {
@@ -47,17 +50,17 @@ class ConjunctionOperator(children: List[Expression]) extends AbstractOperator(c
         if (equiv(finalScore, 0.0d)) {
           Result(score = finalScore,
             AnalyzersDataInternal(
-              context = analyzersDataInternal.context,
-              traversedStates = analyzersDataInternal.traversedStates,
-              extractedVariables = analyzersDataInternal.extractedVariables,
-              data = analyzersDataInternal.data
+              context = data.context,
+              traversedStates = data.traversedStates,
+              extractedVariables = data.extractedVariables,
+              data = data.data
             )
           )
         } else {
           Result(score = finalScore,
             AnalyzersDataInternal(
-              context = analyzersDataInternal.context,
-              traversedStates = analyzersDataInternal.traversedStates,
+              context = data.context,
+              traversedStates = data.traversedStates,
               // map summation order is important, as valHead elements must override valTail existing elements
               extractedVariables = valTail.data.extractedVariables ++ valHead.data.extractedVariables,
               data = valTail.data.data ++ valHead.data.data
