@@ -4,8 +4,8 @@ package com.getjenny.analyzer.analyzers
   * Created by Angelo Leto <angelo@getjenny.com> on 03/03/17.
   */
 
-
 import org.scalatest._
+import org.scalatest.matchers.should.Matchers
 
 class GenericAnalyzersTest extends FlatSpec with Matchers {
 

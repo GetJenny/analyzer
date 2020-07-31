@@ -6,6 +6,7 @@ package com.getjenny.analyzer.analyzers
 
 import com.getjenny.analyzer.expressions.AnalyzersDataInternal
 import org.scalatest._
+import org.scalatest.matchers.should.Matchers
 
 class NumericalComparisonAtomicTest extends FlatSpec with Matchers {
 

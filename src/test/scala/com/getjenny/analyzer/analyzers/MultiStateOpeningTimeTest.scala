@@ -6,7 +6,7 @@ package com.getjenny.analyzer.analyzers
 
 import com.getjenny.analyzer.expressions.AnalyzersDataInternal
 import org.scalatest._
-import com.getjenny.analyzer.atoms.ExceptionAtomic
+import org.scalatest.matchers.should.Matchers
 
 class MultiStateOpeningTimeTest extends FlatSpec with Matchers {
 

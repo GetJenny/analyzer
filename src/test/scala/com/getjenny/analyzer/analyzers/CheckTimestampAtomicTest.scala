@@ -7,6 +7,7 @@ package com.getjenny.analyzer.analyzers
 import com.getjenny.analyzer.expressions.AnalyzersDataInternal
 import com.getjenny.analyzer.util.Time
 import org.scalatest._
+import org.scalatest.matchers.should.Matchers
 
 class CheckTimestampAtomicTest extends FlatSpec with Matchers {
 
