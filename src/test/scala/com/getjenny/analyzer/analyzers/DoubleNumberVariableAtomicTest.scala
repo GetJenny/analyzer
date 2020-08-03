@@ -4,9 +4,10 @@ package com.getjenny.analyzer.analyzers
   * Created by Angelo Leto <angelo@getjenny.com> on 03/03/17.
   */
 
+import com.getjenny.analyzer.atoms.ExceptionAtomic
 import com.getjenny.analyzer.expressions.AnalyzersDataInternal
 import org.scalatest._
-import com.getjenny.analyzer.atoms.ExceptionAtomic
+import org.scalatest.matchers.should.Matchers
 
 class DoubleNumberVariableAtomicTest extends FlatSpec with Matchers {
 

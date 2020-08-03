@@ -1,8 +1,8 @@
 package com.getjenny.analyzer.operators
 
 import com.getjenny.analyzer.expressions._
-import scalaz._
-import Scalaz._
+import scalaz.Scalaz._
+import scala.math.Ordering.Double.equiv
 
 /**
   * Created by mal on 21/02/2017.
@@ -28,34 +28,43 @@ class DisjunctionOperator(children: List[Expression]) extends AbstractOperator(c
   def evaluate(query: String, data: AnalyzersDataInternal = new AnalyzersDataInternal): Result = {
     def compDisjunction(l: List[Expression]): Result = {
       val res = l.headOption match {
-        case Some(t) => {
-          t.evaluate(query, data)
-        }
-        case _ =>
-          throw OperatorException("DisjunctionOperator: operator argument is empty")
+        case Some(arg) => arg.evaluate(query, data)
+        case _ => throw OperatorException("DisjunctionOperator: inner expression is empty")
       }
-
-      l.tailOption match {
-        case Some(t) =>
-          if (t.nonEmpty) {
-            val compDisj = compDisjunction(t)
-            Result(score = (1.0 - res.score) * compDisj.score,
-              AnalyzersDataInternal(
-                context = data.context,
-                traversedStates = data.traversedStates,
-                extractedVariables = compDisj.data.extractedVariables ++ res.data.extractedVariables,
-                data = compDisj.data.data ++ res.data.data
-              )
-            )
-          } else {
-            Result(score = 1.0 - res.score, data = res.data)
-          }
-        case _ =>
-          throw OperatorException("DisjunctionOperator: the tail must be a list")
+      if (l.tail.isEmpty) {
+        Result(score = 1.0d - res.score,
+          AnalyzersDataInternal(
+            context = data.context,
+            traversedStates = data.traversedStates,
+            extractedVariables = data.extractedVariables ++ res.data.extractedVariables,
+            data = data.data ++ res.data.data
+          )
+        )
+      } else {
+        val resTail = compDisjunction(l.tail)
+        Result(score = (1.0d - res.score) * resTail.score,
+          AnalyzersDataInternal(
+            context = data.context,
+            traversedStates = data.traversedStates,
+            // map summation order is important, as res elements must override resTail existing elements
+            extractedVariables = resTail.data.extractedVariables ++ res.data.extractedVariables,
+            data = resTail.data.data ++ res.data.data
+          )
+        )
       }
     }
-    val comp_disj = compDisjunction(children)
-    Result(score=1.0 - comp_disj.score, data = comp_disj.data)
+    val resCompDisj = compDisjunction(children)
+    val finalScore = 1.0d - resCompDisj.score
+    if (equiv(finalScore, 0.0d)) {
+      Result(
+        score = finalScore,
+        data = data
+      )
+    } else {
+      Result(
+        score = finalScore,
+        data = resCompDisj.data
+      )
+    }
   }
 }
-

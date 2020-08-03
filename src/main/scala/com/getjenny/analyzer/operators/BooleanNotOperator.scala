@@ -1,8 +1,7 @@
 package com.getjenny.analyzer.operators
 
 import com.getjenny.analyzer.expressions._
-import scalaz._
-import Scalaz._
+import scalaz.Scalaz._
 
 /** Not Operator
   *
@@ -41,6 +40,6 @@ class BooleanNotOperator(child: List[Expression]) extends AbstractOperator(child
       case Some(arg) => arg.matches(query, data)
       case _ => throw OperatorException("BooleanNotOperator: inner expression is empty")
     }
-    Result(score=1 - res.score, data = res.data)
+    Result(score = 1 - res.score, data = data)
   }
 }
