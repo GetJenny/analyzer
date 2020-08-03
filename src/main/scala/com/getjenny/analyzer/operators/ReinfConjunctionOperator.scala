@@ -50,14 +50,7 @@ class ReinfConjunctionOperator(children: List[Expression]) extends AbstractOpera
         val valTail = reinfConjunction(l.tail)
         val finalScore = (valHead.score * 1.1) * valTail.score
         if (equiv(finalScore, 0)) {
-          Result(score = finalScore,
-            AnalyzersDataInternal(
-              context = data.context,
-              traversedStates = data.traversedStates,
-              extractedVariables = data.extractedVariables,
-              data = data.data
-            )
-          )
+          Result(score = finalScore, data = data)
         } else {
           Result(score = finalScore,
             AnalyzersDataInternal(

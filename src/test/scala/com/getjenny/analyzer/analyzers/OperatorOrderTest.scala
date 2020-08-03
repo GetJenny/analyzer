@@ -42,6 +42,7 @@ class OperatorOrderTest extends FlatSpec with Matchers {
   val operatorDisjunction: String = "disjunction"
   val operatorReinfConjunction: String = "reinfConjunction"
   val operatorMax: String = "max"
+  val operatorBinarize: String = "binarize"
 
   operatorBooleanAnd should
   "trigger and extract email address when matching regex pattern" in {
@@ -510,6 +511,71 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
     analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
     analyzerValue.data.extractedVariables.contains(extractedQueryKey) shouldBe false
+    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.data shouldBe Map()
+  }
+
+  operatorBinarize should
+    "trigger and return variables passed as data" in {
+    val analyzer = new DefaultAnalyzer(
+      analyzerString(operatorBinarize, List(atomLastTravStateTrue)),
+      restrictedArgs
+    )
+    val analyzerValue = analyzer.evaluate(queryWithEmail, data)
+    analyzerValue.score shouldBe scoreSuccess
+    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.data shouldBe Map()
+  }
+  it should "not trigger and return variables passed as data" in {
+    val analyzer = new DefaultAnalyzer(
+      analyzerString(operatorBinarize, List(atomLastTravStateFalse)),
+      restrictedArgs
+    )
+    val analyzerValue = analyzer.evaluate(queryWithEmail, data)
+    analyzerValue.score shouldBe scoreFailure
+    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.data shouldBe Map()
+  }
+  it should "trigger and update email address variable" in {
+    val analyzer = new DefaultAnalyzer(
+      analyzerString(operatorBinarize, List(atomExtractEmail)),
+      restrictedArgs
+    )
+    val analyzerValue = analyzer.evaluate(queryWithEmail, data)
+    analyzerValue.score shouldBe scoreSuccess
+    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.data shouldBe Map()
+  }
+  it should "not trigger and not update email address variable" in {
+    val analyzer = new DefaultAnalyzer(
+      analyzerString(operatorBinarize, List(atomExtractEmail)),
+      restrictedArgs
+    )
+    val analyzerValue = analyzer.evaluate(queryNoEmail, data)
+    analyzerValue.score shouldBe scoreFailure
+    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.data shouldBe Map()
+  }
+  it should "trigger, update email address variable, and return score 1" in {
+    val analyzer = new DefaultAnalyzer(
+      analyzerString(
+        operatorBinarize,
+        List(analyzerString(operatorReinfConjunction, List(atomExtractEmail)))
+      ),
+      restrictedArgs
+    )
+    val analyzerValue = analyzer.evaluate(queryWithEmail, data)
+    analyzerValue.score shouldBe scoreSuccess
+    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
     analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
     analyzerValue.data.data shouldBe Map()
   }

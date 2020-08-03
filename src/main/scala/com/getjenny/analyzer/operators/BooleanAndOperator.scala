@@ -44,14 +44,7 @@ class BooleanAndOperator(children: List[Expression]) extends AbstractOperator(ch
         val valTail = booleanAnd(l.tail)
         val finalScore = valHead.score * valTail.score
         if (finalScore  =/= 1.0d) {
-          Result(score = finalScore,
-            AnalyzersDataInternal(
-              context = data.context,
-              traversedStates = data.traversedStates,
-              extractedVariables = data.extractedVariables,
-              data = data.data
-            )
-          )
+          Result(score = finalScore, data = data)
         } else {
           Result(score = finalScore,
             AnalyzersDataInternal(
