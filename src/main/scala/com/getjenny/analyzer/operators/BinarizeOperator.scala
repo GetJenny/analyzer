@@ -1,8 +1,9 @@
 package com.getjenny.analyzer.operators
 
 import com.getjenny.analyzer.expressions._
-import scalaz._
-import Scalaz._
+import scalaz.Scalaz._
+
+import scala.math.Ordering.Double.equiv
 
 /** Binarize Operator
   *
@@ -39,6 +40,20 @@ class BinarizeOperator(child: List[Expression]) extends AbstractOperator(child: 
       case Some(arg) => arg.matches(query, data)
       case _ => throw OperatorException("BinarizeOperator: inner expression is empty")
     }
-    Result(score=if (res.score > 0.0 ) 1.0 else 0.0, data = res.data)
+    if (equiv(res.score, 0.0d))
+      Result(
+        score = 0.0d,
+        data = data
+      )
+    else
+      Result(
+        score = 1.0d,
+        AnalyzersDataInternal(
+          context = data.context,
+          traversedStates = data.traversedStates,
+          extractedVariables = data.extractedVariables ++ res.data.extractedVariables,
+          data = data.data ++ res.data.data
+        )
+      )
   }
 }
