@@ -1,8 +1,8 @@
 package com.getjenny.analyzer.operators
 
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result, StateVariables}
 import com.getjenny.analyzer.expressions._
-import scalaz._
-import Scalaz._
+import scalaz.Scalaz._
 
 /**
   * Created by angelo on 21/06/17.
@@ -35,8 +35,10 @@ class MaxOperator(children: List[Expression]) extends AbstractOperator(children:
         score = val1.score,
         AnalyzersDataInternal(
           context = data.context,
-          traversedStates = data.traversedStates,
-          extractedVariables = data.extractedVariables ++ val1.data.extractedVariables,
+          stateVariables = StateVariables(
+            traversedStates = data.stateVariables.traversedStates,
+            extractedVariables = data.stateVariables.extractedVariables ++ val1.data.stateVariables.extractedVariables
+          ),
           data = data.data ++ val1.data.data
         )
       )
@@ -49,8 +51,11 @@ class MaxOperator(children: List[Expression]) extends AbstractOperator(children:
             score = val1.score,
             AnalyzersDataInternal(
               context = data.context,
-              traversedStates = data.traversedStates,
-              extractedVariables = val2.data.extractedVariables ++ val1.data.extractedVariables,
+              stateVariables = StateVariables(
+                traversedStates = data.stateVariables.traversedStates,
+                extractedVariables = val2.data.stateVariables.extractedVariables ++
+                  val1.data.stateVariables.extractedVariables
+              ),
               data = val2.data.data ++ val1.data.data
             )
           )

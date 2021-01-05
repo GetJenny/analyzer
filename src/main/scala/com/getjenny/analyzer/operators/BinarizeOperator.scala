@@ -1,5 +1,6 @@
 package com.getjenny.analyzer.operators
 
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result, StateVariables}
 import com.getjenny.analyzer.expressions._
 import scalaz.Scalaz._
 
@@ -50,8 +51,10 @@ class BinarizeOperator(child: List[Expression]) extends AbstractOperator(child: 
         score = 1.0d,
         AnalyzersDataInternal(
           context = data.context,
-          traversedStates = data.traversedStates,
-          extractedVariables = data.extractedVariables ++ res.data.extractedVariables,
+          stateVariables = StateVariables(
+            traversedStates = data.stateVariables.traversedStates,
+            extractedVariables = data.stateVariables.extractedVariables ++ res.data.stateVariables.extractedVariables
+          ),
           data = data.data ++ res.data.data
         )
       )

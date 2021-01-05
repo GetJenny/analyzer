@@ -1,5 +1,6 @@
 package com.getjenny.analyzer.operators
 
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result}
 import com.getjenny.analyzer.expressions._
 import scalaz.Scalaz._
 

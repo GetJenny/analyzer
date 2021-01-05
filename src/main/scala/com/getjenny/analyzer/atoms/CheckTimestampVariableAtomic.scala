@@ -4,7 +4,7 @@ package com.getjenny.analyzer.atoms
   * Created by angelo on 05/07/18.
   */
 
-import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result}
 import com.getjenny.analyzer.util.{ComparisonOperators, Time}
 
 /** Check if the current time is Equal, LessOrEqual, Less, Greater, GreaterOrEqual to the argument time in EPOC
@@ -31,7 +31,7 @@ class CheckTimestampVariableAtomic(val arguments: List[String],
 
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     val currTimestamp: Long = Time.timestampEpoc
-    data.extractedVariables.get(varName) match {
+    data.stateVariables.extractedVariables.get(varName) match {
       case Some(value) =>
         try {
           if (ComparisonOperators.compare(currTimestamp, value.toLong, argOperator))

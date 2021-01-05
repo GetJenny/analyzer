@@ -4,7 +4,7 @@ package com.getjenny.analyzer.atoms
   * Created by angelo on 19/10/18.
   */
 
-import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result}
 
 /** Double Atomic
   *

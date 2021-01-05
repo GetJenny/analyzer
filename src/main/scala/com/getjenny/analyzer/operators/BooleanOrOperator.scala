@@ -1,5 +1,6 @@
 package com.getjenny.analyzer.operators
 
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result, StateVariables}
 import com.getjenny.analyzer.expressions._
 import scalaz.Scalaz._
 
@@ -35,9 +36,12 @@ class BooleanOrOperator(children: List[Expression]) extends AbstractOperator(chi
         Result(score = 1.0d - res.score,
           AnalyzersDataInternal(
             context = data.context,
-            traversedStates = data.traversedStates,
-            // map summation order is important, as res elements must override pre-existing elements
-            extractedVariables = data.extractedVariables ++ res.data.extractedVariables,
+            stateVariables = StateVariables(
+              traversedStates = data.stateVariables.traversedStates,
+              // map summation order is important, as res elements must override pre-existing elements
+              extractedVariables = data.stateVariables.extractedVariables ++
+                res.data.stateVariables.extractedVariables
+            ),
             data = data.data ++ res.data.data
           )
         )
@@ -46,9 +50,12 @@ class BooleanOrOperator(children: List[Expression]) extends AbstractOperator(chi
         Result(score = (1.0d - res.score) * resTail.score,
           AnalyzersDataInternal(
             context = data.context,
-            traversedStates = data.traversedStates,
-            // map summation order is important, as res elements must override resTail existing elements
-            extractedVariables = resTail.data.extractedVariables ++ res.data.extractedVariables,
+            stateVariables = StateVariables(
+              traversedStates = data.stateVariables.traversedStates,
+              // map summation order is important, as res elements must override resTail existing elements
+              extractedVariables = resTail.data.stateVariables.extractedVariables ++
+                res.data.stateVariables.extractedVariables
+            ),
             data = resTail.data.data ++ res.data.data
           )
         )

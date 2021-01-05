@@ -1,6 +1,7 @@
 package com.getjenny.analyzer.expressions
 
 
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result}
 import scalaz.Scalaz._
 /**
   * This the basic structure of StarChat Domain Specific Language.
@@ -40,9 +41,4 @@ abstract class Expression(children: List[Expression]) {
       children.flatMap(e => e.findOccurrencesOfOperator(operatorName))
 
     }
-
-
-
-
-
   }

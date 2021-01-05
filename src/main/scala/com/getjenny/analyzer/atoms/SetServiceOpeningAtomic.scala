@@ -4,7 +4,7 @@ package com.getjenny.analyzer.atoms
   * Created by angelo on 13/02/19.
   */
 
-import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result, StateVariables}
 import com.getjenny.analyzer.util.{JsonToEntities, Time}
 import scalaz.Scalaz._
 
@@ -33,7 +33,7 @@ class SetServiceOpeningAtomic(val arguments: List[String],
 
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     // fetch the variables, parse JSON and create the OpeningTime data
-    val variables = data.extractedVariables.map{ case(k, v) =>
+    val variables = data.stateVariables.extractedVariables.map{ case(k, v) =>
       val name = matchName(k)
       (name, v)
     }.filterKeys(_ =/= "").map{ case(k, v) =>
@@ -61,8 +61,10 @@ class SetServiceOpeningAtomic(val arguments: List[String],
     val serviceOpenVariable: Map[String, Map[String, Boolean]] = Map("__GJ_INTERNAL_SERVICEOPEN__" -> variables)
     val newData = AnalyzersDataInternal(
       context = data.context,
-      traversedStates = data.traversedStates,
-      extractedVariables = data.extractedVariables,
+      stateVariables = StateVariables(
+        traversedStates = data.stateVariables.traversedStates,
+        extractedVariables = data.stateVariables.extractedVariables
+      ),
       data = data.data ++ serviceOpenVariable
     )
 

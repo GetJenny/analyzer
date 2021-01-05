@@ -4,7 +4,7 @@ package com.getjenny.analyzer.atoms
   * Created by angelo on 13/02/19.
   */
 
-import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result}
 
 /** Check the variables, to determine whether or not the service is open
   *

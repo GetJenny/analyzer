@@ -1,9 +1,9 @@
-package com.getjenny.analyzer.expressions
+package com.getjenny.analyzer.entities
 
-case class AnalyzersData(
-                          traversedStates: Vector[String] = Vector.empty[String],
+case class StateVariables(
+                          traversedStates: Vector[DtHistoryItem] = Vector.empty[DtHistoryItem],
                           extractedVariables: Map[String, String] = Map.empty[String, String]
-               )
+                        )
 
 case class Context(
                     indexName: String = "",
@@ -12,7 +12,6 @@ case class Context(
 
 case class AnalyzersDataInternal(
                                   context: Context = Context(),
-                                  traversedStates: Vector[String] = Vector.empty[String],
-                                  extractedVariables: Map[String, String] = Map.empty[String, String],
+                                  stateVariables: StateVariables = StateVariables(),
                                   data: Map[String, Any] = Map.empty[String, Any]
-                        )
+                                )

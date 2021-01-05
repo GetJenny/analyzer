@@ -5,7 +5,8 @@ package com.getjenny.analyzer.analyzers
   */
 
 import com.getjenny.analyzer.atoms._
-import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Expression, Result}
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result}
+import com.getjenny.analyzer.expressions.Expression
 import com.getjenny.analyzer.interfaces.{AtomicFactoryTrait, OperatorFactoryTrait}
 import com.getjenny.analyzer.operators._
 

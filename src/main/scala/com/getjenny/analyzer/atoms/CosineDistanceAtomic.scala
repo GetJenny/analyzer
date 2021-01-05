@@ -1,9 +1,9 @@
 package com.getjenny.analyzer.atoms
 
-import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
 import com.getjenny.analyzer.util._
 import scalaz._
 import Scalaz._
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result}
 
 /**
   * Created by angelo on 18/09/2017.

@@ -1,6 +1,8 @@
 package com.getjenny.analyzer.operators
 
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result, StateVariables}
 import com.getjenny.analyzer.expressions._
+
 import scala.math.Ordering.Double.equiv
 
 /**
@@ -40,9 +42,12 @@ class ReinfConjunctionOperator(children: List[Expression]) extends AbstractOpera
         Result(score = valHead.score * 1.1,
           AnalyzersDataInternal(
             context = data.context,
-            traversedStates = data.traversedStates,
-            // map summation order is important, as valHead elements must override pre-existing elements
-            extractedVariables = data.extractedVariables ++ valHead.data.extractedVariables,
+            stateVariables = StateVariables(
+              traversedStates = data.stateVariables.traversedStates,
+              // map summation order is important, as valHead elements must override pre-existing elements
+              extractedVariables = data.stateVariables.extractedVariables ++
+                valHead.data.stateVariables.extractedVariables
+            ),
             data = data.data ++ valHead.data.data
           )
         )
@@ -55,9 +60,12 @@ class ReinfConjunctionOperator(children: List[Expression]) extends AbstractOpera
           Result(score = finalScore,
             AnalyzersDataInternal(
               context = data.context,
-              traversedStates = data.traversedStates,
-              // map summation order is important, as valHead elements must override valTail existing elements
-              extractedVariables = valTail.data.extractedVariables ++ valHead.data.extractedVariables,
+              stateVariables = StateVariables(
+                traversedStates = data.stateVariables.traversedStates,
+                // map summation order is important, as valHead elements must override valTail existing elements
+                extractedVariables = valTail.data.stateVariables.extractedVariables ++
+                  valHead.data.stateVariables.extractedVariables
+              ),
               data = valTail.data.data ++ valHead.data.data
             )
           )

@@ -4,7 +4,7 @@ package com.getjenny.analyzer.atoms
   * Created by angelo on 05/07/18.
   */
 
-import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result}
 import com.getjenny.analyzer.util.{ComparisonOperators, Time}
 
 /** Check if the current month is Equal, LessOrEqual, Less, Greater, GreaterOrEqual to the argument which

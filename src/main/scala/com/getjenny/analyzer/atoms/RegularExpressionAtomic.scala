@@ -1,6 +1,6 @@
 package com.getjenny.analyzer.atoms
 
-import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result}
 
 /**
   * Created by mal on 20/02/2017.

@@ -4,11 +4,12 @@ package com.getjenny.analyzer.analyzers
   * Created by Michele Boggia <michele.boggia@getjenny.com> on 30/07/20.
   */
 
-import com.getjenny.analyzer.expressions.AnalyzersDataInternal
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, DtHistoryItem, DtHistoryType, StateVariables}
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class OperatorOrderTest extends FlatSpec with Matchers {
+class OperatorOrderTest extends AnyFlatSpec with Matchers {
 
   val restrictedArgs: Map[String, String] = Map.empty[String, String]
   val travStateId: String = "00dac6ee-80a1-4054-baac-747a80bb7738"
@@ -21,8 +22,10 @@ class OperatorOrderTest extends FlatSpec with Matchers {
   val extractedEmailKey = "email_address.0"
   val extractedQueryKey = "customer_message.0"
   val data: AnalyzersDataInternal = AnalyzersDataInternal(
-    traversedStates = Vector[String](travStateId),
-    extractedVariables = Map[String, String](extractedVarKey -> extractedVarValue, extractedEmailKey -> emailExtracted)
+    stateVariables = StateVariables(
+      traversedStates = Vector[DtHistoryItem](DtHistoryItem(state = travStateId, `type` = DtHistoryType.EXTERNAL)),
+      extractedVariables = Map[String, String](extractedVarKey -> extractedVarValue, extractedEmailKey -> emailExtracted)
+    )
   )
   val atomExtractEmail: String = """matchPatternRegex("[email_address](?:([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+))")"""
   val atomExtractQuery: String = """matchPatternRegex("[customer_message](.*)")"""
@@ -45,18 +48,18 @@ class OperatorOrderTest extends FlatSpec with Matchers {
   val operatorBinarize: String = "binarize"
 
   operatorBooleanAnd should
-  "trigger and extract email address when matching regex pattern" in {
-      val analyzer = new DefaultAnalyzer(
-        analyzerString(operatorBooleanAnd, List(atomExtractEmail)),
-        restrictedArgs
-      )
-      val analyzerValue = analyzer.evaluate(queryWithEmail, data)
-      analyzerValue.score shouldBe scoreSuccess
-      analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-      analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-      analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
-    analyzerValue.data.data shouldBe Map()
-    }
+    "trigger and extract email address when matching regex pattern" in {
+    val analyzer = new DefaultAnalyzer(
+      analyzerString(operatorBooleanAnd, List(atomExtractEmail)),
+      restrictedArgs
+    )
+    val analyzerValue = analyzer.evaluate(queryWithEmail, data)
+    analyzerValue.score shouldBe scoreSuccess
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
+    analyzerValue.data.data shouldBe Map.empty[String, Any]
+  }
   it should "trigger and extract email address when matching regex pattern and lastTravStateIs is true" in {
     val analyzer = new DefaultAnalyzer(
       analyzerString(operatorBooleanAnd,List(atomExtractEmail, atomLastTravStateTrue)),
@@ -64,9 +67,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract email address when lastTravStateIs is true and matching regex pattern" in {
@@ -76,9 +79,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "not trigger and not update email address when matching regex pattern and lastTravStateIs is false" in {
@@ -88,9 +91,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreFailure
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "not trigger and not update email address when lastTravStateIs is false and matching regex pattern" in {
@@ -100,9 +103,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreFailure
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract both email address and customer message" in {
@@ -112,10 +115,10 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
 
@@ -127,9 +130,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract email address when matching regex pattern and lastTravStateIs is false" in {
@@ -139,9 +142,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract email address when lastTravStateIs is false and matching regex pattern" in {
@@ -151,9 +154,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract both email address and customer message" in {
@@ -163,10 +166,10 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
 
@@ -178,9 +181,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryNoEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "not trigger and return previously extracted email when matching regex pattern" in {
@@ -190,9 +193,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreFailure
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
 
@@ -204,9 +207,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract email address when matching regex pattern and lastTravStateIs is true" in {
@@ -216,9 +219,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract email address when lastTravStateIs is true and matching regex pattern" in {
@@ -228,9 +231,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "not trigger and not update email address when matching regex pattern and lastTravStateIs is false" in {
@@ -240,9 +243,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreFailure
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "not trigger and not update email address when lastTravStateIs is false and matching regex pattern" in {
@@ -252,9 +255,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreFailure
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract both email address and customer message" in {
@@ -264,10 +267,10 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
 
@@ -279,9 +282,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract email address when matching regex pattern and lastTravStateIs is false" in {
@@ -291,9 +294,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract email address when lastTravStateIs is false and matching regex pattern" in {
@@ -303,9 +306,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract both email address and customer message" in {
@@ -315,10 +318,10 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
 
@@ -330,9 +333,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccessReinf1
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract email address when matching regex pattern and lastTravStateIs is true" in {
@@ -342,9 +345,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccessReinf2
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract email address when lastTravStateIs is true and matching regex pattern" in {
@@ -354,9 +357,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccessReinf2
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "not trigger and not update email address when matching regex pattern and lastTravStateIs is false" in {
@@ -366,9 +369,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreFailure
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "not trigger and not update email address when lastTravStateIs is false and matching regex pattern" in {
@@ -378,9 +381,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreFailure
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and extract both email address and customer message" in {
@@ -390,10 +393,10 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccessReinf3
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
 
@@ -405,9 +408,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and update email variable" in {
@@ -417,9 +420,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and update email variable in presence of multiple operands with lower score" in {
@@ -429,9 +432,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and update email variable in presence of multiple operands with lower score (reverse order)" in {
@@ -441,9 +444,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and update email variable in presence of multiple operands with score 1" in {
@@ -453,9 +456,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and update email variable in presence of multiple operands with score 1 (reverse order)" in {
@@ -465,9 +468,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "not trigger and not update email variable" in {
@@ -477,9 +480,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreFailure
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger, update email variable and extract customer message" in {
@@ -489,10 +492,10 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.extractedVariables(extractedQueryKey) shouldBe queryWithEmail
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and add to result only the variable from operand with higher score" in {
@@ -508,10 +511,10 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccessReinf1
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.extractedVariables.contains(extractedQueryKey) shouldBe false
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.extractedVariables.contains(extractedQueryKey) shouldBe false
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
 
@@ -523,9 +526,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "not trigger and return variables passed as data" in {
@@ -535,9 +538,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreFailure
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger and update email address variable" in {
@@ -547,9 +550,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "not trigger and not update email address variable" in {
@@ -559,9 +562,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryNoEmail, data)
     analyzerValue.score shouldBe scoreFailure
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailExtracted
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailExtracted
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
   it should "trigger, update email address variable, and return score 1" in {
@@ -574,9 +577,9 @@ class OperatorOrderTest extends FlatSpec with Matchers {
     )
     val analyzerValue = analyzer.evaluate(queryWithEmail, data)
     analyzerValue.score shouldBe scoreSuccess
-    analyzerValue.data.extractedVariables(extractedVarKey) shouldBe extractedVarValue
-    analyzerValue.data.extractedVariables(extractedEmailKey) shouldBe emailInQuery
-    analyzerValue.data.traversedStates shouldBe Vector[String](travStateId)
+    analyzerValue.data.stateVariables.extractedVariables(extractedVarKey) shouldBe extractedVarValue
+    analyzerValue.data.stateVariables.extractedVariables(extractedEmailKey) shouldBe emailInQuery
+    analyzerValue.data.stateVariables.traversedStates.last.state shouldBe travStateId
     analyzerValue.data.data shouldBe Map()
   }
 }

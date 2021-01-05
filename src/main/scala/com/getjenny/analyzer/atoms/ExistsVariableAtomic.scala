@@ -1,6 +1,6 @@
 package com.getjenny.analyzer.atoms
 
-import com.getjenny.analyzer.expressions.{AnalyzersDataInternal, Result}
+import com.getjenny.analyzer.entities.{AnalyzersDataInternal, Result}
 
 /**
   * Created by angelo on 26/06/17.
@@ -26,7 +26,7 @@ class ExistsVariableAtomic(val arguments: List[String], restrictedArgs: Map[Stri
     * @return Result with 1.0 if the variable exists score = 0.0 otherwise
     */
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
-    if(data.extractedVariables.contains(varName)) {
+    if(data.stateVariables.extractedVariables.contains(varName)) {
       Result(score = 1.0)
     } else {
       Result(score = 0.0)
