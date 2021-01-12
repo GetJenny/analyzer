@@ -11,8 +11,8 @@ import org.scalatest.matchers.should.Matchers
 class MultiStateOpeningTimeTest extends AnyFlatSpec with Matchers {
 
   val data = AnalyzersDataInternal(
-    stateVariables = StateVariables(
-      extractedVariables = Map[String, String]("GJ_SERVICEOPEN_SERVICE1" ->
+    stateData = StateVariables(
+      variables = Map[String, String]("GJ_SERVICEOPEN_SERVICE1" ->
         """{
           |  "openTime": "00:00",
           |  "closeTime": "23:59",

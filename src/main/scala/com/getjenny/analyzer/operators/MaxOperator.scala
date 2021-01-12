@@ -35,9 +35,10 @@ class MaxOperator(children: List[Expression]) extends AbstractOperator(children:
         score = val1.score,
         AnalyzersDataInternal(
           context = data.context,
-          stateVariables = StateVariables(
-            traversedStates = data.stateVariables.traversedStates,
-            extractedVariables = data.stateVariables.extractedVariables ++ val1.data.stateVariables.extractedVariables
+          stateData = StateVariables(
+            traversedStates = data.stateData.traversedStates,
+            variables = data.stateData.variables ++
+              val1.data.stateData.variables
           ),
           data = data.data ++ val1.data.data
         )
@@ -51,10 +52,10 @@ class MaxOperator(children: List[Expression]) extends AbstractOperator(children:
             score = val1.score,
             AnalyzersDataInternal(
               context = data.context,
-              stateVariables = StateVariables(
-                traversedStates = data.stateVariables.traversedStates,
-                extractedVariables = val2.data.stateVariables.extractedVariables ++
-                  val1.data.stateVariables.extractedVariables
+              stateData = StateVariables(
+                traversedStates = data.stateData.traversedStates,
+                variables = val2.data.stateData.variables ++
+                  val1.data.stateData.variables
               ),
               data = val2.data.data ++ val1.data.data
             )

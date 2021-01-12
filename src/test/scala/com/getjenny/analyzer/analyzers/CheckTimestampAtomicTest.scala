@@ -14,8 +14,8 @@ class CheckTimestampAtomicTest extends AnyFlatSpec with Matchers {
   val restrictedArgs = Map.empty[String, String]
   "checkTimestampVariableAtom" should "return 1.0 testing if current timestamp > 1549990000" in {
     val data = AnalyzersDataInternal(
-      stateVariables = StateVariables(
-        extractedVariables = Map[String, String]("TIMESTAMP" -> "1549990000")
+      stateData = StateVariables(
+        variables = Map[String, String]("TIMESTAMP" -> "1549990000")
       )
     )
     val analyzer = new DefaultAnalyzer("""checkTimestampVariable("TIMESTAMP", "Greater")""", restrictedArgs)
@@ -24,8 +24,8 @@ class CheckTimestampAtomicTest extends AnyFlatSpec with Matchers {
   }
   it should "return 0.0 testing if current timestamp > 9999999999" in {
     val data = AnalyzersDataInternal(
-      stateVariables = StateVariables(
-        extractedVariables = Map[String, String]("TIMESTAMP" -> "9999999999")
+      stateData = StateVariables(
+        variables = Map[String, String]("TIMESTAMP" -> "9999999999")
       )
     )
     val analyzer = new DefaultAnalyzer("""checkTimestampVariable("TIMESTAMP", "Greater")""", restrictedArgs)
@@ -34,8 +34,8 @@ class CheckTimestampAtomicTest extends AnyFlatSpec with Matchers {
   }
   it should "return 1.0 testing if current timestamp < 9999999999" in {
     val data = AnalyzersDataInternal(
-      stateVariables = StateVariables(
-        extractedVariables = Map[String, String]("TIMESTAMP" -> "9999999999")
+      stateData = StateVariables(
+        variables = Map[String, String]("TIMESTAMP" -> "9999999999")
       )
     )
     val analyzer = new DefaultAnalyzer("""checkTimestampVariable("TIMESTAMP", "Less")""", restrictedArgs)

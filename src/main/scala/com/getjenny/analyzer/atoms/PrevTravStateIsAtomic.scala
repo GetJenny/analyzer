@@ -30,8 +30,8 @@ class PrevTravStateIsAtomic(val arguments: List[String], restrictedArgs: Map[Str
     * @return Result with 1.0 if the penultimate state is <name> score = 0.0 otherwise
     */
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
-    val listLength = data.stateVariables.traversedStates.length
-    if(listLength >= 2 && data.stateVariables.traversedStates(listLength-2).state === name) {
+    val listLength = data.stateData.traversedStates.length
+    if(listLength >= 2 && data.stateData.traversedStates(listLength-2).state === name) {
       Result(score = 1.0)
     } else {
       Result(score = 0.0)

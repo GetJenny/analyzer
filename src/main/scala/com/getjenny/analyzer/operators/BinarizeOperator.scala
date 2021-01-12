@@ -51,9 +51,10 @@ class BinarizeOperator(child: List[Expression]) extends AbstractOperator(child: 
         score = 1.0d,
         AnalyzersDataInternal(
           context = data.context,
-          stateVariables = StateVariables(
-            traversedStates = data.stateVariables.traversedStates,
-            extractedVariables = data.stateVariables.extractedVariables ++ res.data.stateVariables.extractedVariables
+          stateData = StateVariables(
+            traversedStates = data.stateData.traversedStates,
+            variables = data.stateData.variables ++
+              res.data.stateData.variables
           ),
           data = data.data ++ res.data.data
         )

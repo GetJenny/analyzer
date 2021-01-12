@@ -42,11 +42,11 @@ class ReinfConjunctionOperator(children: List[Expression]) extends AbstractOpera
         Result(score = valHead.score * 1.1,
           AnalyzersDataInternal(
             context = data.context,
-            stateVariables = StateVariables(
-              traversedStates = data.stateVariables.traversedStates,
+            stateData = StateVariables(
+              traversedStates = data.stateData.traversedStates,
               // map summation order is important, as valHead elements must override pre-existing elements
-              extractedVariables = data.stateVariables.extractedVariables ++
-                valHead.data.stateVariables.extractedVariables
+              variables = data.stateData.variables ++
+                valHead.data.stateData.variables
             ),
             data = data.data ++ valHead.data.data
           )
@@ -60,11 +60,11 @@ class ReinfConjunctionOperator(children: List[Expression]) extends AbstractOpera
           Result(score = finalScore,
             AnalyzersDataInternal(
               context = data.context,
-              stateVariables = StateVariables(
-                traversedStates = data.stateVariables.traversedStates,
+              stateData = StateVariables(
+                traversedStates = data.stateData.traversedStates,
                 // map summation order is important, as valHead elements must override valTail existing elements
-                extractedVariables = valTail.data.stateVariables.extractedVariables ++
-                  valHead.data.stateVariables.extractedVariables
+                variables = valTail.data.stateData.variables ++
+                  valHead.data.stateData.variables
               ),
               data = valTail.data.data ++ valHead.data.data
             )

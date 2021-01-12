@@ -13,8 +13,8 @@ class ComplexAnalyzersExpressionsTests extends AnyFlatSpec with Matchers {
   val restrictedArgs = Map.empty[String, String]
   "ComplexAnalyzersExpressionsTests" should "return true if the current hour is between opening and closing hour" in {
     val data = AnalyzersDataInternal(
-      stateVariables = StateVariables(
-        extractedVariables = Map[String, String]("OPEN_HOUR" -> "8", "CLOSE_HOUR" -> "18", "CURRENT_HOUR" -> "17")
+      stateData = StateVariables(
+        variables = Map[String, String]("OPEN_HOUR" -> "8", "CLOSE_HOUR" -> "18", "CURRENT_HOUR" -> "17")
       )
     )
     val analyzer = new DefaultAnalyzer("""band(gte(doubleNumberVariable("CURRENT_HOUR"),doubleNumberVariable("OPEN_HOUR")), lte(doubleNumberVariable("CURRENT_HOUR"), doubleNumberVariable("CLOSE_HOUR")))""", restrictedArgs)

@@ -28,7 +28,7 @@ class LastTravStateIsAtomic(val arguments: List[String], restrictedArgs: Map[Str
     * @return Result with 1.0 if the last state is <name> score = 0.0 otherwise
     */
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
-    data.stateVariables.traversedStates.lastOption match {
+    data.stateData.traversedStates.lastOption match {
       case Some(t) =>
         t.state match {
           case `name` => Result(score = 1.0)

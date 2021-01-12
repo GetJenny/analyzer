@@ -36,11 +36,11 @@ class BooleanOrOperator(children: List[Expression]) extends AbstractOperator(chi
         Result(score = 1.0d - res.score,
           AnalyzersDataInternal(
             context = data.context,
-            stateVariables = StateVariables(
-              traversedStates = data.stateVariables.traversedStates,
+            stateData = StateVariables(
+              traversedStates = data.stateData.traversedStates,
               // map summation order is important, as res elements must override pre-existing elements
-              extractedVariables = data.stateVariables.extractedVariables ++
-                res.data.stateVariables.extractedVariables
+              variables = data.stateData.variables ++
+                res.data.stateData.variables
             ),
             data = data.data ++ res.data.data
           )
@@ -50,11 +50,11 @@ class BooleanOrOperator(children: List[Expression]) extends AbstractOperator(chi
         Result(score = (1.0d - res.score) * resTail.score,
           AnalyzersDataInternal(
             context = data.context,
-            stateVariables = StateVariables(
-              traversedStates = data.stateVariables.traversedStates,
+            stateData = StateVariables(
+              traversedStates = data.stateData.traversedStates,
               // map summation order is important, as res elements must override resTail existing elements
-              extractedVariables = resTail.data.stateVariables.extractedVariables ++
-                res.data.stateVariables.extractedVariables
+              variables = resTail.data.stateData.variables ++
+                res.data.stateData.variables
             ),
             data = resTail.data.data ++ res.data.data
           )

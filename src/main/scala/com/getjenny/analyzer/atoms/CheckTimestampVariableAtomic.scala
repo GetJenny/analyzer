@@ -31,7 +31,7 @@ class CheckTimestampVariableAtomic(val arguments: List[String],
 
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     val currTimestamp: Long = Time.timestampEpoc
-    data.stateVariables.extractedVariables.get(varName) match {
+    data.stateData.variables.get(varName) match {
       case Some(value) =>
         try {
           if (ComparisonOperators.compare(currTimestamp, value.toLong, argOperator))

@@ -33,7 +33,7 @@ class SetServiceOpeningAtomic(val arguments: List[String],
 
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
     // fetch the variables, parse JSON and create the OpeningTime data
-    val variables = data.stateVariables.extractedVariables.map{ case(k, v) =>
+    val variables = data.stateData.variables.map{ case(k, v) =>
       val name = matchName(k)
       (name, v)
     }.filterKeys(_ =/= "").map{ case(k, v) =>
@@ -61,9 +61,9 @@ class SetServiceOpeningAtomic(val arguments: List[String],
     val serviceOpenVariable: Map[String, Map[String, Boolean]] = Map("__GJ_INTERNAL_SERVICEOPEN__" -> variables)
     val newData = AnalyzersDataInternal(
       context = data.context,
-      stateVariables = StateVariables(
-        traversedStates = data.stateVariables.traversedStates,
-        extractedVariables = data.stateVariables.extractedVariables
+      stateData = StateVariables(
+        traversedStates = data.stateData.traversedStates,
+        variables = data.stateData.variables
       ),
       data = data.data ++ serviceOpenVariable
     )

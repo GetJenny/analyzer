@@ -5,10 +5,10 @@ package com.getjenny.analyzer.analyzers
   */
 
 import com.getjenny.analyzer.entities.AnalyzersDataInternal
-import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class NumericalComparisonAtomicTest extends FlatSpec with Matchers {
+class NumericalComparisonAtomicTest extends AnyFlatSpec with Matchers {
   val restrictedArgs = Map.empty[String, String]
   "comparisonAtom" should "return 0.0 testing if 1.0 >= 2.0" in {
     val data = AnalyzersDataInternal()

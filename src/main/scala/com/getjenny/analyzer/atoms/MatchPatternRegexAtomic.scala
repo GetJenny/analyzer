@@ -34,9 +34,9 @@ class MatchPatternRegexAtomic(val arguments: List[String], restrictedArgs: Map[S
     val res = Try(Result(score = 1.0,
       AnalyzersDataInternal(
         context = data.context,
-        stateVariables = StateVariables(
-          traversedStates = data.stateVariables.traversedStates,
-          extractedVariables = regexExtractor.evaluate(query)
+        stateData = StateVariables(
+          traversedStates = data.stateData.traversedStates,
+          variables = regexExtractor.evaluate(query)
         )
       )
     )) recover {

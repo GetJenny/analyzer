@@ -37,9 +37,9 @@ class DisjunctionOperator(children: List[Expression]) extends AbstractOperator(c
         Result(score = 1.0d - res.score,
           AnalyzersDataInternal(
             context = data.context,
-            stateVariables = StateVariables(
-              traversedStates = data.stateVariables.traversedStates,
-              extractedVariables = data.stateVariables.extractedVariables ++ res.data.stateVariables.extractedVariables
+            stateData = StateVariables(
+              traversedStates = data.stateData.traversedStates,
+              variables = data.stateData.variables ++ res.data.stateData.variables
             ),
             data = data.data ++ res.data.data
           )
@@ -49,10 +49,11 @@ class DisjunctionOperator(children: List[Expression]) extends AbstractOperator(c
         Result(score = (1.0d - res.score) * resTail.score,
           AnalyzersDataInternal(
             context = data.context,
-            stateVariables = StateVariables(
-              traversedStates = data.stateVariables.traversedStates,
+            stateData = StateVariables(
+              traversedStates = data.stateData.traversedStates,
               // map summation order is important, as res elements must override resTail existing elements
-              extractedVariables = resTail.data.stateVariables.extractedVariables ++ res.data.stateVariables.extractedVariables
+              variables = resTail.data.stateData.variables ++
+                res.data.stateData.variables
             ),
             data = resTail.data.data ++ res.data.data
           )

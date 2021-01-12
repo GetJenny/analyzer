@@ -35,10 +35,11 @@ class BooleanAndOperator(children: List[Expression]) extends AbstractOperator(ch
         Result(score = valHead.score,
           AnalyzersDataInternal(
             context = data.context,
-            stateVariables = StateVariables(
-              traversedStates = data.stateVariables.traversedStates,
+            stateData = StateVariables(
+              traversedStates = data.stateData.traversedStates,
               // map summation order is important, as valHead elements must override pre-existing elements
-              extractedVariables = data.stateVariables.extractedVariables ++ valHead.data.stateVariables.extractedVariables
+              variables = data.stateData.variables ++
+                valHead.data.stateData.variables
             ),
             data = data.data ++ valHead.data.data
           )
@@ -52,11 +53,11 @@ class BooleanAndOperator(children: List[Expression]) extends AbstractOperator(ch
           Result(score = finalScore,
             AnalyzersDataInternal(
               context = data.context,
-              stateVariables = StateVariables(
-              traversedStates = data.stateVariables.traversedStates,
+              stateData = StateVariables(
+              traversedStates = data.stateData.traversedStates,
               // map summation order is important, as valHead elements must override valTail existing elements
-              extractedVariables = valTail.data.stateVariables.extractedVariables ++
-                valHead.data.stateVariables.extractedVariables
+              variables = valTail.data.stateData.variables ++
+                valHead.data.stateData.variables
               ),
               data = valTail.data.data ++ valHead.data.data
             )

@@ -30,7 +30,7 @@ class HasTravStateAtomic(val arguments: List[String], restrictedArgs: Map[String
     * @return Result with 1.0 if the state exists score = 0.0 otherwise
     */
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
-    if(data.stateVariables.traversedStates.map(s => s.state).contains(name)) {
+    if(data.stateData.traversedStates.map(s => s.state).contains(name)) {
       Result(score = 1.0)
     } else {
       Result(score = 0.0)

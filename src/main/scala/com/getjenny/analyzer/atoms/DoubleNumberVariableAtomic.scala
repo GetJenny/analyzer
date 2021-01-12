@@ -34,7 +34,7 @@ class DoubleNumberVariableAtomic(val arguments: List[String], restrictedArgs: Ma
     * @return Result with 1.0 if the variable exists score = 0.0 otherwise
     */
   def evaluate(query: String, data: AnalyzersDataInternal = AnalyzersDataInternal()): Result = {
-    val score = data.stateVariables.extractedVariables.get(varName) match {
+    val score = data.stateData.variables.get(varName) match {
       case Some(value) =>
         try {
           value.toDouble
